@@ -43,4 +43,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     Optional<User> findByPhoneNumber(String phoneNumber);
 
+    /**
+     * 전화번호 혹은 이메일로 사용자를 조회
+     *
+     * @param phoneNumber
+     * @return 전화
+     * */
 }

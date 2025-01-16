@@ -46,6 +46,16 @@ public class UserService {
         }
     }
 
+
+    /**
+    * 로그인 Id 찾기
+     *
+     * @return loginId
+    * */
+    public String findByLoginId(User user) {
+
+    }
+
     /**
      * 회원 전체 조회
      *
