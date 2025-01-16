@@ -19,13 +19,9 @@ public class UserService {
 
     // 회원가입
     public Long register(User user) {
+        //중복검증
         validateDuplicateUser(user);
 
-        //전화번호 포맷
-        String formatPhoneNumber = formatPhoneNumber(user.getPhoneNumber());
-        user.setPhoneNumber(formatPhoneNumber);
-        user.setRole(User.Role.USER);
-        user.setCreatedAt(LocalDateTime.now());
         userRepository.save(user);
         return user.getId();
     }
@@ -41,7 +37,7 @@ public class UserService {
         if (userRepository.findByNickname(user.getNickname()).isPresent()) {
             throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
         }
-        if( userRepository.findByPhoneNumber(formatPhoneNumber(user.getPhoneNumber())).isPresent()) {
+        if( userRepository.findByPhoneNumber(user.getPhoneNumber()).isPresent()) {
             throw new IllegalArgumentException("이미 사용 중인 전화번호입니다.");
         }
     }
@@ -67,14 +63,5 @@ public class UserService {
     public User findUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 사용자를 찾을 수 없습니다."));
-    }
-
-    //전화번호 포맷팅
-    private String formatPhoneNumber(String phoneNumber) {
-        if (phoneNumber == null || phoneNumber.length() != 11 || !phoneNumber.matches("\\d{11}")) {
-            System.out.println("phoneNumber = " + phoneNumber);
-            throw new IllegalArgumentException("전화번호는 숫자 11자리여야 합니다.");
-        }
-        return phoneNumber.replaceFirst("(\\d{3})(\\d{4})(\\d{4})", "$1-$2-$3");
     }
 }

@@ -22,7 +22,7 @@ class UserServiceTest {
     @Test
     public void 회원가입() throws Exception{
         //given
-        User user = new User("zero0515","test","jin","zero0515@gmail.com","1234","01091940785");
+        User user = User.createUser("zero0515","test","jin","zero0515@gmail.com","1234","01091940785");
         //when
         Long saveId = userService.register(user);
 
@@ -35,8 +35,8 @@ class UserServiceTest {
     @Test()
     public void 중복_아이디예외() throws Exception {
         //given
-        User user = new User("zero0515", "test", "jin", "zero0515@gmail.com", "1234", "01091940785");
-        User user2 = new User("zero0515", "123", "123", "123@gmail.com", "1234", "01091940785");
+        User user =User.createUser("zero0515", "sab", "jin", "zero0515@gmail.com", "1234", "01091940785");
+        User user2 = User.createUser("zero0515", "123", "123", "123@gmail.com", "1234", "01091940785");
         Long saveId = userService.register(user);
 
         //when
@@ -51,8 +51,8 @@ class UserServiceTest {
     @Test
     public void 중복_이메일예외() throws Exception{
         //given
-        User user = new User("zero0515", "test", "jin", "zero0515@gmail.com", "1234", "01091940785");
-        User user2 = new User("123", "123", "123", "zero0515@gmail.com", "1234", "123");
+        User user = User.createUser("zero0515", "test", "jin", "zero0515@gmail.com", "1234", "01091940785");
+        User user2 = User.createUser("123", "123", "123", "zero0515@gmail.com", "1234", "01091950000");
         Long saveId = userService.register(user);
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -65,8 +65,8 @@ class UserServiceTest {
     @Test
     public void 중복_닉네임예외() throws Exception{
         //given
-        User user = new User("zero0515", "test", "jin", "zero0515@gmail.com", "1234", "01091940785");
-        User user2 = new User("123", "test", "123", "123@gmail.com", "1234", "123");
+        User user = User.createUser("zero0515", "test", "jin", "zero0515@gmail.com", "1234", "01091940785");
+        User user2 = User.createUser("123", "test", "123", "123@gmail.com", "1234", "01091950000");
         Long saveId = userService.register(user);
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -79,8 +79,8 @@ class UserServiceTest {
     @Test
     public void 중복_전화번호예외() throws Exception{
         //given
-        User user = new User("zero0515", "test", "jin", "zero0515@gmail.com", "1234", "01091940785");
-        User user2 = new User("123", "123", "123", "123@gmail.com", "1234", "01091940785");
+        User user = User.createUser("zero0515", "test", "jin", "zero0515@gmail.com", "1234", "01091940785");
+        User user2 = User.createUser("123", "123", "123", "123@gmail.com", "1234", "01091940785");
         Long saveId = userService.register(user);
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
