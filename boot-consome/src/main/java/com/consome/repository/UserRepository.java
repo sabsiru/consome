@@ -31,7 +31,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * 닉네임으로 사용자를 조회합니다.
      *
      * @param nickname 사용자 닉네임
-     * @return 닉네임에 해당하는 사용자
+     * @return 닉네임에 해당하는 사용자ls
      */
     Optional<User> findByNickname(String nickname);
 
