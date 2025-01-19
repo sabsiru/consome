@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -21,8 +22,8 @@ public class UserService {
     public Long register(User user) {
         //중복검증
         validateDuplicateUser(user);
-
         userRepository.save(user);
+
         return user.getId();
     }
 
@@ -64,4 +65,17 @@ public class UserService {
         return userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 사용자를 찾을 수 없습니다."));
     }
+    /**
+     * 전화번호로 아이디 찾기
+     *
+     * @param phoneNumber
+     * @return 사용자ID
+     * @throws IllegalArgumentException 사용자가 존재하지 않을 경우 예외 발생
+     * */
+    @Transactional(readOnly = true)
+    public String findLoginIdByPhoneNumber(String phoneNumber) {
+        return userRepository.findLoginIdByPhoneNumber(phoneNumber)
+                .orElseThrow(()-> new IllegalArgumentException("해당 전화번호로 가입된 ID가 없습니다."));
+    }
+
 }

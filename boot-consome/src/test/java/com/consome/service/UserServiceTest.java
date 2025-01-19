@@ -9,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 @RunWith(SpringRunner.class)
@@ -89,5 +91,16 @@ class UserServiceTest {
         //then
         assertEquals("이미 사용 중인 전화번호입니다.", exception.getMessage());
     }
+
+   @Test
+   public void 전화번호로_로그인아이디찾기() throws Exception{
+       //given
+       User user = User.createUser("zero0515", "test", "jin", "zero0515@gmail.com", "1234", "01091940785");
+        userService.register(user);
+       //when
+       String findId = userService.findLoginIdByPhoneNumber("010-9194-0785");
+       //then
+       assertEquals("zero0515", findId);
+   }
 
 }

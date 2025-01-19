@@ -1,7 +1,11 @@
 package com.consome.repository;
 
+import jakarta.persistence.EntityManager;
 import org.springframework.data.jpa.repository.JpaRepository;
 import com.consome.domain.User;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 import java.util.Optional;
 
 /**
@@ -10,6 +14,7 @@ import java.util.Optional;
  * 사용자 정보를 데이터베이스와 상호작용하기 위한 JPA 리포지토리 인터페이스.
  */
 public interface UserRepository extends JpaRepository<User, Long> {
+
 
     /**
      * 로그인 ID로 사용자를 조회합니다.
@@ -38,15 +43,19 @@ public interface UserRepository extends JpaRepository<User, Long> {
     /**
      * 전화번호로 사용자를 조회합니다.
      *
-     * @param phoneNumber 사용자 닉네임
+     * @param phoneNumber 사용자 전화번호
      * @return 전화번호에 해당하는 사용자
      */
     Optional<User> findByPhoneNumber(String phoneNumber);
 
     /**
-     * 전화번호 혹은 이메일로 사용자 ID를 조회
+     * 전화번호로 사용자 ID를 조회
      *
      * @param phoneNumber
      * @return 사용자 ID
+     * @query 어노테이션을 사용해서 직접 쿼리 작성 및 원하는 값만 뽑는 예시 용으로 작성
      * */
+    @Query("select u.loginId from User u where u.phoneNumber = :phoneNumber")
+    Optional<String> findLoginIdByPhoneNumber(
+            String phoneNumber);
 }
