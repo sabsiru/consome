@@ -78,4 +78,15 @@ public class UserService {
                 .orElseThrow(()-> new IllegalArgumentException("해당 전화번호로 가입된 ID가 없습니다."));
     }
 
+    /**
+     * 이메일로 아이디 찾기
+     *
+     * @param email
+     * @return 사용자ID
+     * @throws IllegalArgumentException 사용자가 존재하지 않을 경우 예외 발생
+     * */
+    @Transactional(readOnly = true)
+    public User findUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(()->new IllegalArgumentException("해당 이메일로 가입된 ID가 없습니다."));
+    }
 }

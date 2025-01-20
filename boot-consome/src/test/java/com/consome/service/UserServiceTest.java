@@ -103,4 +103,14 @@ class UserServiceTest {
        assertEquals("zero0515", findId);
    }
 
+   @Test
+   public void 이메일로_로그인아이디찾기() throws Exception{
+       //given
+       User user = User.createUser("zero0515", "test", "jin", "zero0515@gmail.com", "1234", "01091940785");
+       userService.register(user);
+       //when
+       User userByEmail = userService.findUserByEmail("zero0515@gmail.com");
+       //then
+       assertEquals("zero0515@gmail.com", userByEmail.getEmail());
+   }
 }
