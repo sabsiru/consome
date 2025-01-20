@@ -1,15 +1,14 @@
 package com.consome.service;
 
+import com.consome.domain.PointHistory;
 import com.consome.domain.User;
-import com.consome.domain.UserPoint;
+import com.consome.repository.PointHistoryRepository;
 import com.consome.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -17,12 +16,15 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
-
+    private final PointHistoryRepository pointHitoryRepository;
     // 회원가입
     public Long register(User user) {
         //중복검증
         validateDuplicateUser(user);
         userRepository.save(user);
+
+        PointHistory pointHistory = PointHistory.createInitPointHistory(user);
+        pointHitoryRepository.save(pointHistory);
 
         return user.getId();
     }

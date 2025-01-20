@@ -1,6 +1,8 @@
 package com.consome.service;
 
+import com.consome.domain.PointHistory;
 import com.consome.domain.User;
+import com.consome.repository.PointHistoryRepository;
 import com.consome.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -8,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,6 +20,8 @@ class UserServiceTest {
 
     @Autowired UserService userService;
     @Autowired UserRepository userRepository;
+    @Autowired
+    PointHistoryRepository pointHitoryRepository;
 
     @Test
     public void 회원가입() throws Exception{
@@ -29,9 +31,20 @@ class UserServiceTest {
         Long saveId = userService.register(user);
 
         //then
-
         User foundUser = userRepository.findById(saveId).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         assertThat(foundUser).isEqualTo(user);
+    }
+
+    @Test
+    public void 회원가입시포인트조회() throws Exception{
+        //given
+        User user = User.createUser("zero0515","test","jin","zero0515@gmail.com","1234","01091940785");
+        //when
+        Long saveId = userService.register(user);
+        //then
+        PointHistory pointHistory = pointHitoryRepository.findById(saveId).get();
+        assertEquals(100,pointHistory.getCurrentPoint());
+        assertEquals("회원가입",pointHistory.getReason());
     }
 
     @Test()
