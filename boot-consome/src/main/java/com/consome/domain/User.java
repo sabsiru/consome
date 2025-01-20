@@ -37,6 +37,8 @@ public class User {
     @Column(nullable = false)
     private Role role; // 사용자 권한
 
+    private int currentPoint; // 현재 포인트
+
     private LocalDateTime createdAt; // 가입 날짜
 
     private LocalDateTime updatedAt; // 마지막 수정 날짜
@@ -76,6 +78,11 @@ public class User {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.updatedAt = LocalDateTime.now();
+    }
+
+    //포인트 업데이트
+    public void setCurrentPoint(int currentPoint) {
+        this.currentPoint = currentPoint;
     }
 
     //전화번호 포맷팅 메서드
