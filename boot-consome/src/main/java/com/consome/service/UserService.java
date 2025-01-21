@@ -1,7 +1,9 @@
 package com.consome.service;
 
+import com.consome.domain.CurrentPoint;
 import com.consome.domain.PointHistory;
 import com.consome.domain.User;
+import com.consome.repository.CurrentPointRepository;
 import com.consome.repository.PointHistoryRepository;
 import com.consome.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,15 +18,19 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final PointHistoryRepository pointHitoryRepository;
+    private final PointHistoryRepository pointHistoryRepository;
+    private final CurrentPointRepository currentPointRepository;
+
     // 회원가입
     public Long register(User user) {
         //중복검증
         validateDuplicateUser(user);
         userRepository.save(user);
 
+        CurrentPoint currentPoint = CurrentPoint.initCurrentPoint(user);
         PointHistory pointHistory = PointHistory.createInitPointHistory(user);
-        pointHitoryRepository.save(pointHistory);
+        currentPointRepository.save(currentPoint);
+        pointHistoryRepository.save(pointHistory);
 
         return user.getId();
     }
