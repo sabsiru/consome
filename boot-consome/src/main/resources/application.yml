@@ -6,7 +6,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: create  # 데이터베이스 스키마 자동 생성 설정 (none, update, create, create-drop) 추후 none으로 변경할것
+      ddl-auto: none  # 데이터베이스 스키마 자동 생성 설정 (none, update, create, create-drop) 추후 none으로 변경할것
     show-sql: true  # SQL 쿼리 로그 출력 여부
     format_sql: true
     type: trace
