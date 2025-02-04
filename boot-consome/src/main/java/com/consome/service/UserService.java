@@ -7,6 +7,8 @@ import com.consome.repository.CurrentPointRepository;
 import com.consome.repository.PointHistoryRepository;
 import com.consome.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,35 +22,50 @@ public class UserService {
     private final UserRepository userRepository;
     private final PointHistoryRepository pointHistoryRepository;
     private final CurrentPointRepository currentPointRepository;
+    private final PasswordEncoder passwordEncoder;
+
+
 
     // 회원가입
+    @Transactional
     public Long register(User user) {
         //중복검증
-        validateDuplicateUser(user);
-        userRepository.save(user);
+        validateDuplicateUser(user.getLoginId(), user.getEmail(), user.getNickname(), user.getPhoneNumber());
+        //암호화 및 휴대폰번호 포맷 적용
+        User createUser = User.createUser(user.getLoginId(),
+                user.getNickname(),
+                user.getName(),
+                user.getEmail(),
+                user.getPassword(),
+                user.getPhoneNumber(),
+                passwordEncoder);
 
-        CurrentPoint currentPoint = CurrentPoint.initCurrentPoint(user);
-        PointHistory pointHistory = PointHistory.createInitPointHistory(user);
+       userRepository.save(createUser);
+
+        CurrentPoint currentPoint = CurrentPoint.initCurrentPoint(createUser);
+        PointHistory pointHistory = PointHistory.createInitPointHistory(createUser);
+
         currentPointRepository.save(currentPoint);
         pointHistoryRepository.save(pointHistory);
 
-        return user.getId();
+        return createUser.getId();
     }
 
     //로그인
 
     // 중복 검사
-    private void validateDuplicateUser(User user) {
-        if (userRepository.findByLoginId(user.getLoginId()).isPresent()) {
+    private void validateDuplicateUser(String loginId, String email, String nickname, String phoneNumber) {
+
+        if (userRepository.findByLoginId(loginId).isPresent()) {
             throw new IllegalArgumentException("이미 사용 중인 로그인 ID입니다.");
         }
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+        if (userRepository.findByEmail(email).isPresent()) {
             throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
         }
-        if (userRepository.findByNickname(user.getNickname()).isPresent()) {
+        if (userRepository.findByNickname(nickname).isPresent()) {
             throw new IllegalArgumentException("이미 사용 중인 닉네임입니다.");
         }
-        if( userRepository.findByPhoneNumber(user.getPhoneNumber()).isPresent()) {
+        if( userRepository.findByPhoneNumber(phoneNumber).isPresent()) {
             throw new IllegalArgumentException("이미 사용 중인 전화번호입니다.");
         }
     }

@@ -2,12 +2,16 @@ package com.consome.service;
 
 import com.consome.domain.PointHistory;
 import com.consome.domain.User;
+import com.consome.repository.CurrentPointRepository;
 import com.consome.repository.PointHistoryRepository;
 import com.consome.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,38 +24,46 @@ class UserServiceTest {
 
     @Autowired UserService userService;
     @Autowired UserRepository userRepository;
-    @Autowired
-    PointHistoryRepository pointHitoryRepository;
+    @Autowired PointHistoryRepository pointHistoryRepository;
+    @Autowired CurrentPointRepository currentPointRepository;
+    @Autowired PasswordEncoder passwordEncoder;
 
     @Test
     public void 회원가입() throws Exception{
         //given
-        User user = User.createUser("zero0515","test","jin","zero0515@gmail.com","1234","01091940785");
+        User user = User.createUser("zero0515","test","jin","zero0515@gmail.com","1234","01091940785",passwordEncoder);
         //when
         Long saveId = userService.register(user);
 
         //then
         User foundUser = userRepository.findById(saveId).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
-        assertThat(foundUser).isEqualTo(user);
+        // ✅ 로그인 아이디를 기준으로 검증
+        assertThat(foundUser.getLoginId()).isEqualTo(user.getLoginId());
     }
 
     @Test
     public void 회원가입시포인트조회() throws Exception{
         //given
-        User user = User.createUser("zero0515","test","jin","zero0515@gmail.com","1234","01091940785");
+        User user = User.createUser("zero0515","test","jin",
+                "zero0515@gmail.com","1234","01091940785",passwordEncoder
+        );
+
         //when
         Long saveId = userService.register(user);
+
         //then
-        PointHistory pointHistory = pointHitoryRepository.findById(saveId).get();
+        PointHistory pointHistory = pointHistoryRepository.findByUserIdOrderByCreatedAtDesc(saveId)
+                .orElseThrow(() -> new IllegalArgumentException("포인트 히스토리를 찾을 수 없습니다."));
         assertEquals(100,pointHistory.getCurrentPoint());
         assertEquals("회원가입",pointHistory.getReason());
+
     }
 
     @Test()
     public void 중복_아이디예외() throws Exception {
         //given
-        User user =User.createUser("zero0515", "sab", "jin", "zero0515@gmail.com", "1234", "01091940785");
-        User user2 = User.createUser("zero0515", "123", "123", "123@gmail.com", "1234", "01091940785");
+        User user = User.createUser("zero0515","test","jin","zero0515@gmail.com","1234","01091940785",passwordEncoder);
+        User user2 = User.createUser("zero0515", "123", "123", "123@gmail.com", "1234", "01091940785",passwordEncoder);
         Long saveId = userService.register(user);
 
         //when
@@ -66,8 +78,8 @@ class UserServiceTest {
     @Test
     public void 중복_이메일예외() throws Exception{
         //given
-        User user = User.createUser("zero0515", "test", "jin", "zero0515@gmail.com", "1234", "01091940785");
-        User user2 = User.createUser("123", "123", "123", "zero0515@gmail.com", "1234", "01091950000");
+        User user = User.createUser("zero0515","test","jin","zero0515@gmail.com","1234","01091940785",passwordEncoder);
+        User user2 = User.createUser("123", "123", "123", "zero0515@gmail.com", "1234", "01091950000",passwordEncoder);
         Long saveId = userService.register(user);
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -80,8 +92,8 @@ class UserServiceTest {
     @Test
     public void 중복_닉네임예외() throws Exception{
         //given
-        User user = User.createUser("zero0515", "test", "jin", "zero0515@gmail.com", "1234", "01091940785");
-        User user2 = User.createUser("123", "test", "123", "123@gmail.com", "1234", "01091950000");
+        User user = User.createUser("zero0515","test","jin","zero0515@gmail.com","1234","01091940785",passwordEncoder);
+        User user2 = User.createUser("123", "test", "123", "123@gmail.com", "1234", "01091950000",passwordEncoder);
         Long saveId = userService.register(user);
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -94,8 +106,8 @@ class UserServiceTest {
     @Test
     public void 중복_전화번호예외() throws Exception{
         //given
-        User user = User.createUser("zero0515", "test", "jin", "zero0515@gmail.com", "1234", "01091940785");
-        User user2 = User.createUser("123", "123", "123", "123@gmail.com", "1234", "01091940785");
+        User user = User.createUser("zero0515", "test", "jin", "zero0515@gmail.com", "1234", "01091940785",passwordEncoder);
+        User user2 = User.createUser("123", "123", "123", "123@gmail.com", "1234", "01091940785",passwordEncoder);
         Long saveId = userService.register(user);
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -108,10 +120,10 @@ class UserServiceTest {
    @Test
    public void 전화번호로_로그인아이디찾기() throws Exception{
        //given
-       User user = User.createUser("zero0515", "test", "jin", "zero0515@gmail.com", "1234", "01091940785");
+       User user = User.createUser("zero0515", "test", "jin", "zero0515@gmail.com", "1234", "01091940785",passwordEncoder);
         userService.register(user);
        //when
-       String findId = userService.findLoginIdByPhoneNumber("010-9194-0785");
+       String findId = userService.findLoginIdByPhoneNumber("01091940785");
        //then
        assertEquals("zero0515", findId);
    }
@@ -119,7 +131,7 @@ class UserServiceTest {
    @Test
    public void 이메일로_로그인아이디찾기() throws Exception{
        //given
-       User user = User.createUser("zero0515", "test", "jin", "zero0515@gmail.com", "1234", "01091940785");
+       User user = User.createUser("zero0515", "test", "jin", "zero0515@gmail.com", "1234", "01091940785",passwordEncoder);
        userService.register(user);
        //when
        User userByEmail = userService.findUserByEmail("zero0515@gmail.com");

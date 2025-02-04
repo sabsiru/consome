@@ -2,6 +2,8 @@ package com.consome.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 
@@ -41,7 +43,7 @@ public class User {
 
     private LocalDateTime updatedAt; // 마지막 수정 날짜
 
-    public User() {
+    protected User() {
 
     }
 
@@ -50,18 +52,25 @@ public class User {
         USER, ADMIN, SUPERADMIN
     }
 
-    //유저 생성
-    public static User createUser(String loginId, String nickname, String name, String email, String password, String phoneNumber) {
-        User user = new User();
-        user.loginId = loginId;
-        user.nickname = nickname;
-        user.name = name;
-        user.email = email;
-        user.password = password; // 비밀번호는 암호화된 상태로 전달되어야 함
-        user.role = Role.USER;
-        user.createdAt = LocalDateTime.now();
-        user.phoneNumber = formatPhoneNumber(phoneNumber);
-        return user;
+    // 🔹 비밀번호 암호화 포함한 정적 생성 메서드
+    public static User createUser(String loginId, String nickname, String name, String email, String rawPassword, String phoneNumber, PasswordEncoder passwordEncoder) {
+        return new User(
+                loginId, nickname, name, email,
+                passwordEncoder.encode(rawPassword), // 비밀번호 암호화
+                formatPhoneNumber(phoneNumber), Role.USER, LocalDateTime.now()
+        );
+    }
+
+    // 🔹 private 생성자 활용
+    private User(String loginId, String nickname, String name, String email, String password, String phoneNumber, Role role, LocalDateTime createdAt) {
+        this.loginId = loginId;
+        this.nickname = nickname;
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.role = role;
+        this.createdAt = createdAt;
     }
 
     // 비밀번호 변경 메서드
@@ -82,7 +91,6 @@ public class User {
     //전화번호 포맷팅 메서드
     private static String formatPhoneNumber(String phoneNumber) {
         if (phoneNumber == null || phoneNumber.length() != 11 || !phoneNumber.matches("\\d{11}")) {
-            System.out.println("phoneNumber = " + phoneNumber);
             throw new IllegalArgumentException("전화번호는 숫자 11자리여야 합니다.");
         }
         return phoneNumber.replaceFirst("(\\d{3})(\\d{4})(\\d{4})", "$1-$2-$3");

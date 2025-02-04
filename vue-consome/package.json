@@ -50,7 +50,16 @@
     "parserOptions": {
       "ecmaVersion": 2020
     },
-    "rules": {}
+    "rules": {
+      "prettier/prettier": ["error", { "printWidth": 150, "proseWrap": "never" }]
+    }
+  },
+  "prettier": {
+    "trailingComma": "none",
+    "semi": true,
+    "tabWidth": 2,
+    "printWidth": 150,
+    "proseWrap": "never"
   },
   "browserslist": [
     "> 1%",

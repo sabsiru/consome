@@ -11,14 +11,25 @@ const user = ref({
   nickname: "",
   name: "",
   email: "",
-  phoneNumber: "",
-  password: "",
+  first: "",
+  second: "",
+  third: "",
+  password: ""
 });
 
 // 회원가입 요청
 const signup = async () => {
   try {
-    const response = await axios.post("/api/users/signup", user.value);
+    const formattedPhoneNumber = `${user.value.first}-${user.value.second}-${user.value.third}`;
+    const requestData = {
+      loginId: user.value.loginId,
+      nickname: user.value.nickname,
+      name: user.value.name,
+      email: user.value.email,
+      password: user.value.password,
+      phoneNumber: formattedPhoneNumber // ✅ 변환된 phoneNumber 전송
+    };
+    const response = await axios.post("/api/users/signup", requestData);
     alert(response.data); // "회원가입 성공 (ID: xxx)"
     router.push("/"); // 회원가입 성공 시 메인 페이지 이동
   } catch (error) {
@@ -29,6 +40,12 @@ const signup = async () => {
       alert("회원가입 실패: 서버 오류 발생");
     }
   }
+};
+/**
+ * 숫자만 입력 가능하도록 변환하는 함수
+ */
+const allowOnlyNumbers = (event) => {
+  event.target.value = event.target.value.replace(/[^0-9]/g, ""); // 숫자만 남김
 };
 </script>
 
@@ -52,13 +69,13 @@ const signup = async () => {
         <label>이메일:</label>
         <input v-model="user.email" type="email" required />
       </div>
-      <div>
-        <label>전화번호:</label>
-        <input
-          v-model="user.phoneNumber"
-          type="text"
-          placeholder="010-1234-5678"
-        />
+      <label>전화번호:</label>
+      <div class="phone-number-container">
+        <input v-model="first" type="text" maxlength="3" placeholder="010" @input="allowOnlyNumbers" />
+        <span>-</span>
+        <input v-model="second" type="text" maxlength="4" placeholder="1234" @input="allowOnlyNumbers" />
+        <span>-</span>
+        <input v-model="third" type="text" maxlength="4" placeholder="5678" @input="allowOnlyNumbers" />
       </div>
       <div>
         <label>비밀번호:</label>
@@ -102,5 +119,25 @@ button {
 }
 button:hover {
   background-color: #0056b3;
+}
+.phone-number-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%; /* 부모 컨테이너의 전체 너비 사용 */
+}
+
+.phone-number-container input {
+  width: calc((100% - 40px) / 3); /* 전체 입력칸 너비를 동일하게 분배 */
+  max-width: 120px; /* 입력칸이 너무 커지지 않도록 최대 너비 설정 */
+  text-align: center;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 8px;
+}
+
+.phone-number-container span {
+  font-size: 18px;
 }
 </style>

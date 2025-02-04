@@ -12,8 +12,8 @@ import MainWorld from "@/components/MainWorld.vue"; // @ is an alias to /src
 
 @Options({
   components: {
-    MainWorld,
-  },
+    MainWorld
+  }
 })
 export default class MainView extends Vue {}
 </script>
