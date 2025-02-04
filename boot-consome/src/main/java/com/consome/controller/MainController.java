@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class MainController {
-    @GetMapping("/main")
+
+    @GetMapping("/")
     public String home(){
-        String message = "Hello World! Welcome to Spring Boot!";
-        return message;
+        return "foward:/index.html";
     }
 }

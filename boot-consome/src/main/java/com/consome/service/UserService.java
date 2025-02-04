@@ -35,6 +35,8 @@ public class UserService {
         return user.getId();
     }
 
+    //로그인
+
     // 중복 검사
     private void validateDuplicateUser(User user) {
         if (userRepository.findByLoginId(user.getLoginId()).isPresent()) {
