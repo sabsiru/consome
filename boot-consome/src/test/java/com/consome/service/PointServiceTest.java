@@ -31,11 +31,11 @@ class PointServiceTest {
     public void 포인트_차감() throws Exception{
         //given
         User user = User.createUser("zero0515","test","jin","zero0515@gmail.com","1234","01091940785",passwordEncoder);
-        Long saveId = userService.register(user);
+        User saveId = userService.register(user);
 
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,()-> {
-                pointService.updatePoint(saveId,-101,"테스트 차감");
+                pointService.updatePoint(saveId.getId(),-101,"테스트 차감");
         });
 
         //then
@@ -46,12 +46,12 @@ class PointServiceTest {
     public void 포인트_조회() throws Exception{
         //given
         User user = User.createUser("zero0515","test","jin","zero0515@gmail.com","1234","01091940785",passwordEncoder);
-        Long saveId = userService.register(user);
-        pointService.updatePoint(saveId,-50,"테스트 차감");
-        pointService.updatePoint(saveId,-30,"테스트 차감2");
+        User saveId = userService.register(user);
+        pointService.updatePoint(saveId.getId(),-50,"테스트 차감");
+        pointService.updatePoint(saveId.getId(),-30,"테스트 차감2");
 
         //when
-        int currentPoint = currentPointRepository.findById(saveId).get().getCurrentPoint();
+        int currentPoint = currentPointRepository.findById(saveId.getId()).get().getCurrentPoint();
 
         //then
         assertEquals(20,currentPoint);

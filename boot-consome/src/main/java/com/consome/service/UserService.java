@@ -28,7 +28,7 @@ public class UserService {
 
     // 회원가입
     @Transactional
-    public Long register(User user) {
+    public User register(User user) {
         //중복검증
         validateDuplicateUser(user.getLoginId(), user.getEmail(), user.getNickname(), user.getPhoneNumber());
         //암호화 및 휴대폰번호 포맷 적용
@@ -48,7 +48,7 @@ public class UserService {
         currentPointRepository.save(currentPoint);
         pointHistoryRepository.save(pointHistory);
 
-        return createUser.getId();
+        return createUser;
     }
 
     //로그인

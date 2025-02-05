@@ -57,7 +57,7 @@ public class User {
         return new User(
                 loginId, nickname, name, email,
                 passwordEncoder.encode(rawPassword), // 비밀번호 암호화
-                formatPhoneNumber(phoneNumber), Role.USER, LocalDateTime.now()
+                phoneNumber, Role.USER, LocalDateTime.now()
         );
     }
 
@@ -85,14 +85,5 @@ public class User {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.updatedAt = LocalDateTime.now();
-    }
-
-
-    //전화번호 포맷팅 메서드
-    private static String formatPhoneNumber(String phoneNumber) {
-        if (phoneNumber == null || phoneNumber.length() != 11 || !phoneNumber.matches("\\d{11}")) {
-            throw new IllegalArgumentException("전화번호는 숫자 11자리여야 합니다.");
-        }
-        return phoneNumber.replaceFirst("(\\d{3})(\\d{4})(\\d{4})", "$1-$2-$3");
     }
 }

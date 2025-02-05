@@ -33,10 +33,10 @@ class UserServiceTest {
         //given
         User user = User.createUser("zero0515","test","jin","zero0515@gmail.com","1234","01091940785",passwordEncoder);
         //when
-        Long saveId = userService.register(user);
+        User saveId = userService.register(user);
 
         //then
-        User foundUser = userRepository.findById(saveId).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+        User foundUser = userRepository.findById(saveId.getId()).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
         // ✅ 로그인 아이디를 기준으로 검증
         assertThat(foundUser.getLoginId()).isEqualTo(user.getLoginId());
     }
@@ -49,10 +49,10 @@ class UserServiceTest {
         );
 
         //when
-        Long saveId = userService.register(user);
+        User saveId = userService.register(user);
 
         //then
-        PointHistory pointHistory = pointHistoryRepository.findByUserIdOrderByCreatedAtDesc(saveId)
+        PointHistory pointHistory = pointHistoryRepository.findByUserIdOrderByCreatedAtDesc(saveId.getId())
                 .orElseThrow(() -> new IllegalArgumentException("포인트 히스토리를 찾을 수 없습니다."));
         assertEquals(100,pointHistory.getCurrentPoint());
         assertEquals("회원가입",pointHistory.getReason());
@@ -64,7 +64,7 @@ class UserServiceTest {
         //given
         User user = User.createUser("zero0515","test","jin","zero0515@gmail.com","1234","01091940785",passwordEncoder);
         User user2 = User.createUser("zero0515", "123", "123", "123@gmail.com", "1234", "01091940785",passwordEncoder);
-        Long saveId = userService.register(user);
+        User saveId = userService.register(user);
 
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -80,7 +80,7 @@ class UserServiceTest {
         //given
         User user = User.createUser("zero0515","test","jin","zero0515@gmail.com","1234","01091940785",passwordEncoder);
         User user2 = User.createUser("123", "123", "123", "zero0515@gmail.com", "1234", "01091950000",passwordEncoder);
-        Long saveId = userService.register(user);
+        User saveId = userService.register(user);
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
             userService.register(user2);
@@ -94,7 +94,7 @@ class UserServiceTest {
         //given
         User user = User.createUser("zero0515","test","jin","zero0515@gmail.com","1234","01091940785",passwordEncoder);
         User user2 = User.createUser("123", "test", "123", "123@gmail.com", "1234", "01091950000",passwordEncoder);
-        Long saveId = userService.register(user);
+        User saveId = userService.register(user);
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
             userService.register(user2);
@@ -108,7 +108,7 @@ class UserServiceTest {
         //given
         User user = User.createUser("zero0515", "test", "jin", "zero0515@gmail.com", "1234", "01091940785",passwordEncoder);
         User user2 = User.createUser("123", "123", "123", "123@gmail.com", "1234", "01091940785",passwordEncoder);
-        Long saveId = userService.register(user);
+        User saveId = userService.register(user);
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
             userService.register(user2);

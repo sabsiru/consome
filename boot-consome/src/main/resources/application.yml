@@ -19,8 +19,8 @@ spring:
   flyway:
     locations: classpath:db/migration
 
-
 logging:
   level:
     org.hibernate.SQL: debug
+    org.springframework.security: debug
     #org.hibernate.type:trace
