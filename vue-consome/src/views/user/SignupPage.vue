@@ -1,54 +1,3 @@
-<script setup lang="ts">
-import { ref } from "vue";
-import axios from "axios";
-import { useRouter } from "vue-router";
-
-const router = useRouter();
-
-// 사용자 입력 필드 (User 엔티티 구조와 일치)
-const user = ref({
-  loginId: "",
-  nickname: "",
-  name: "",
-  email: "",
-  first: "",
-  second: "",
-  third: "",
-  password: ""
-});
-
-// 회원가입 요청
-const signup = async () => {
-  try {
-    const formattedPhoneNumber = `${user.value.first}-${user.value.second}-${user.value.third}`;
-    const requestData = {
-      loginId: user.value.loginId,
-      nickname: user.value.nickname,
-      name: user.value.name,
-      email: user.value.email,
-      password: user.value.password,
-      phoneNumber: formattedPhoneNumber // ✅ 변환된 phoneNumber 전송
-    };
-    const response = await axios.post("/api/users/signup", requestData);
-    alert(response.data); // "회원가입 성공 (ID: xxx)"
-    router.push("/"); // 회원가입 성공 시 메인 페이지 이동
-  } catch (error) {
-    // ❌ 중복 검사 실패 시 서버에서 받은 메시지를 alert로 표시
-    if (error.response?.status === 400) {
-      alert(error.response.data); // "이미 사용 중인 로그인 ID입니다."
-    } else {
-      alert("회원가입 실패: 서버 오류 발생");
-    }
-  }
-};
-/**
- * 숫자만 입력 가능하도록 변환하는 함수
- */
-const allowOnlyNumbers = (event) => {
-  event.target.value = event.target.value.replace(/[^0-9]/g, ""); // 숫자만 남김
-};
-</script>
-
 <template>
   <div class="signup-container">
     <h2>회원가입</h2>
@@ -85,6 +34,56 @@ const allowOnlyNumbers = (event) => {
     </form>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ref, computed } from "vue";
+import axios from "axios";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+const API_URL = "/user/signup"; // ✅ URL 상수 선언
+
+// 사용자 입력 필드 (User 엔티티 구조와 일치)
+const user = ref({
+  loginId: "",
+  nickname: "",
+  name: "",
+  email: "",
+  password: ""
+});
+
+const first = ref("");
+const second = ref("");
+const third = ref("");
+
+const formattedPhoneNumber = computed(() => {
+  return `${first.value}-${second.value}-${third.value}`;
+});
+// 회원가입 요청
+const signup = () => {
+  const requestData = {
+    ...user.value,
+    phoneNumber: formattedPhoneNumber.value
+  };
+
+  axios
+    .post(API_URL, requestData)
+    .then((response) => {
+      alert(response.data);
+      router.push("/");
+    })
+    .catch(handleSignupError);
+};
+// ✅ 별도 오류 핸들링 함수 추가
+const handleSignupError = (error) => {
+  const errorMessage = error?.response?.data || "회원가입 실패: 서버 오류 발생";
+  alert(errorMessage);
+};
+const allowOnlyNumbers = (event) => {
+  event.target.value = event.target.value.replace(/[^0-9]/g, ""); // 숫자만 남김
+};
+</script>
 
 <style scoped>
 .signup-container {
