@@ -31,7 +31,7 @@ class UserServiceTest {
     @Test
     public void 회원가입() throws Exception{
         //given
-        User user = User.createUser("zero0515","test","jin","zero0515@gmail.com","1234","01091940785",passwordEncoder);
+        User user = User.createUser("test","test","jin","zero0515@gmail.com","1234","01091940785",passwordEncoder);
         //when
         User saveId = userService.register(user);
 

@@ -1,0 +1,22 @@
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animated-title {
+  font-size: 26px;
+  color: black;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+.app-container {
+  max-width: 1200px;
+  width: 100%;
+  margin: auto;
+}

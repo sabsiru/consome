@@ -1,38 +1,58 @@
 <template>
-  <div class="signup-container">
-    <h2>회원가입</h2>
-    <form @submit.prevent="signup">
-      <div>
-        <label>아이디:</label>
-        <input v-model="user.loginId" type="text" required />
-      </div>
-      <div>
-        <label>닉네임:</label>
-        <input v-model="user.nickname" type="text" required />
-      </div>
-      <div>
-        <label>이름:</label>
-        <input v-model="user.name" type="text" required />
-      </div>
-      <div>
-        <label>이메일:</label>
-        <input v-model="user.email" type="email" required />
-      </div>
-      <label>전화번호:</label>
-      <div class="phone-number-container">
-        <input v-model="first" type="text" maxlength="3" placeholder="010" @input="allowOnlyNumbers" />
-        <span>-</span>
-        <input v-model="second" type="text" maxlength="4" placeholder="1234" @input="allowOnlyNumbers" />
-        <span>-</span>
-        <input v-model="third" type="text" maxlength="4" placeholder="5678" @input="allowOnlyNumbers" />
-      </div>
-      <div>
-        <label>비밀번호:</label>
-        <input v-model="user.password" type="password" required />
-      </div>
-      <button type="submit">회원가입</button>
-    </form>
-  </div>
+  <v-container class="signup-container">
+    <v-card class="pa-6 mx-auto" max-width="500">
+      <v-card-title class="text-h5 text-center">회원가입</v-card-title>
+      <v-card-text>
+        <v-form @submit.prevent="signup">
+          <v-text-field v-model="user.loginId" label="아이디" :rules="[requiredRule]" outlined></v-text-field>
+          <v-text-field v-model="user.nickname" label="닉네임" :rules="[requiredRule]" outlined></v-text-field>
+          <v-text-field v-model="user.name" label="이름" :rules="[requiredRule]" outlined></v-text-field>
+          <v-text-field v-model="user.email" label="이메일" :rules="[requiredRule, emailRule]" outlined type="email"></v-text-field>
+
+          <v-label class="mb-2">전화번호</v-label>
+          <v-row>
+            <v-col cols="4">
+              <v-text-field
+                v-model="first"
+                maxlength="3"
+                placeholder="010"
+                @input="allowOnlyNumbers"
+                :rules="[requiredRule]"
+                outlined
+                dense
+              ></v-text-field>
+            </v-col>
+            <v-col cols="4">
+              <v-text-field
+                v-model="second"
+                maxlength="4"
+                placeholder="1234"
+                @input="allowOnlyNumbers"
+                :rules="[requiredRule]"
+                outlined
+                dense
+              ></v-text-field>
+            </v-col>
+            <v-col cols="4">
+              <v-text-field
+                v-model="third"
+                maxlength="4"
+                placeholder="5678"
+                @input="allowOnlyNumbers"
+                :rules="[requiredRule]"
+                outlined
+                dense
+              ></v-text-field>
+            </v-col>
+          </v-row>
+
+          <v-text-field v-model="user.password" label="비밀번호" type="password" :rules="[requiredRule]" outlined></v-text-field>
+
+          <v-btn color="primary" class="v-btn" type="submit">회원가입</v-btn>
+        </v-form>
+      </v-card-text>
+    </v-card>
+  </v-container>
 </template>
 
 <script setup lang="ts">
@@ -41,7 +61,6 @@ import axios from "axios";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
-
 const API_URL = "/user/signup"; // ✅ URL 상수 선언
 
 // 사용자 입력 필드 (User 엔티티 구조와 일치)
@@ -60,6 +79,11 @@ const third = ref("");
 const formattedPhoneNumber = computed(() => {
   return `${first.value}-${second.value}-${third.value}`;
 });
+//필수 입력 검증
+const requiredRule = (v) => !!v || "필수 입력 항목입니다.";
+// 이메일 형식 검증
+const emailRule = (v) => /.+@.+\..+/.test(v) || "유효한 이메일 주소를 입력하세요.";
+
 // 회원가입 요청
 const signup = () => {
   const requestData = {
@@ -84,59 +108,3 @@ const allowOnlyNumbers = (event) => {
   event.target.value = event.target.value.replace(/[^0-9]/g, ""); // 숫자만 남김
 };
 </script>
-
-<style scoped>
-.signup-container {
-  max-width: 400px;
-  margin: auto;
-  padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-}
-form div {
-  margin-bottom: 10px;
-}
-label {
-  display: block;
-  font-weight: bold;
-}
-input {
-  width: 100%;
-  padding: 8px;
-  margin-top: 5px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-button {
-  width: 100%;
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-button:hover {
-  background-color: #0056b3;
-}
-.phone-number-container {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%; /* 부모 컨테이너의 전체 너비 사용 */
-}
-
-.phone-number-container input {
-  width: calc((100% - 40px) / 3); /* 전체 입력칸 너비를 동일하게 분배 */
-  max-width: 120px; /* 입력칸이 너무 커지지 않도록 최대 너비 설정 */
-  text-align: center;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 8px;
-}
-
-.phone-number-container span {
-  font-size: 18px;
-}
-</style>
