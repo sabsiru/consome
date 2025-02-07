@@ -1,5 +1,5 @@
 package com.consome.domain;
 
 public enum Role {
-    USER,MANAGER,SUPERADMIN
+    USER,MANAGER,ADMIN
 }

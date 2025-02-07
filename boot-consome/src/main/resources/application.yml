@@ -23,4 +23,12 @@ logging:
   level:
     org.hibernate.SQL: debug
     org.springframework.security: debug
+    org.hibernate.type.descriptor.sql.BasicBinder: trace  # 바인딩 파라미터 로그 출력
     #org.hibernate.type:trace
+
+jwt:
+  secret: ${JWT_SECRET_KEY}
+  access:
+    expiration: ${JWT_ACCESS_EXPIRATION}
+  refresh:
+    expiration: ${JWT_REFRESH_EXPIRATION}

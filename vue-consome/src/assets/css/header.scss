@@ -10,13 +10,12 @@
 }
 
 .animated-title {
-  font-size: 26px;
-  color: black;
   animation: fadeIn 0.8s ease-in-out;
-}
-
-.app-container {
   max-width: 1200px;
   width: 100%;
-  margin: auto;
+}
+
+/* 내부 요소 정렬 */
+.header-content {
+  display: flex;
 }

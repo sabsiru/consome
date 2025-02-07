@@ -4,10 +4,10 @@
       <v-card-title class="text-h5 text-center">회원가입</v-card-title>
       <v-card-text>
         <v-form @submit.prevent="signup">
-          <v-text-field v-model="user.loginId" label="아이디" :rules="[requiredRule]" outlined></v-text-field>
-          <v-text-field v-model="user.nickname" label="닉네임" :rules="[requiredRule]" outlined></v-text-field>
-          <v-text-field v-model="user.name" label="이름" :rules="[requiredRule]" outlined></v-text-field>
-          <v-text-field v-model="user.email" label="이메일" :rules="[requiredRule, emailRule]" outlined type="email"></v-text-field>
+          <v-text-field v-model="user.loginId" label="아이디" :rules="[requiredRule]" density="comfortable"></v-text-field>
+          <v-text-field v-model="user.nickname" label="닉네임" :rules="[requiredRule]" density="comfortable"></v-text-field>
+          <v-text-field v-model="user.name" label="이름" :rules="[requiredRule]" density="comfortable"></v-text-field>
+          <v-text-field v-model="user.email" label="이메일" :rules="[requiredRule, emailRule]" density="comfortable" type="email"></v-text-field>
 
           <v-label class="mb-2">전화번호</v-label>
           <v-row>
@@ -18,8 +18,7 @@
                 placeholder="010"
                 @input="allowOnlyNumbers"
                 :rules="[requiredRule]"
-                outlined
-                dense
+                density="comfortable"
               ></v-text-field>
             </v-col>
             <v-col cols="4">
@@ -29,8 +28,7 @@
                 placeholder="1234"
                 @input="allowOnlyNumbers"
                 :rules="[requiredRule]"
-                outlined
-                dense
+                density="comfortable"
               ></v-text-field>
             </v-col>
             <v-col cols="4">
@@ -40,13 +38,12 @@
                 placeholder="5678"
                 @input="allowOnlyNumbers"
                 :rules="[requiredRule]"
-                outlined
-                dense
+                density="comfortable"
               ></v-text-field>
             </v-col>
           </v-row>
 
-          <v-text-field v-model="user.password" label="비밀번호" type="password" :rules="[requiredRule]" outlined></v-text-field>
+          <v-text-field v-model="user.password" label="비밀번호" type="password" :rules="[requiredRule]" density="comfortable"></v-text-field>
 
           <v-btn color="primary" class="v-btn" type="submit">회원가입</v-btn>
         </v-form>

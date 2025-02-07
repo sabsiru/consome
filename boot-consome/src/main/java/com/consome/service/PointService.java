@@ -6,7 +6,7 @@ import com.consome.domain.PointHistory;
 import com.consome.domain.User;
 import com.consome.repository.CurrentPointRepository;
 import com.consome.repository.PointHistoryRepository;
-import com.consome.repository.UserRepository;
+import com.consome.repository.User.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

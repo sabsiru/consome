@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults()) // CORS 설정
                 .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/user/signup", "/user/sign").permitAll() // 회원가입은 인증 없이 허용
+                        .requestMatchers("/user/signup", "/user/sign", "/user/login").permitAll() // 회원가입은 인증 없이 허용
                         .anyRequest().authenticated() // 나머지는 인증 필요
                 )
                 .httpBasic(Customizer.withDefaults()); // HTTP Basic 인증

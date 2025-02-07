@@ -20,20 +20,11 @@ public class UserController {
     public ResponseEntity<?> signup(@RequestBody User user) {
         try {
             User userId = userService.register(user);
-            return ResponseEntity.ok("회원가입 성공 (ID: " + userId.getLoginId() + ")");
+            return ResponseEntity.ok("회원가입 성공. 감사합니다.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생");
         }
-    }
-
-    @PostMapping("/sign")
-    public String sign(@RequestBody Map<String,String> request) {
-        String username = request.get("loginId");
-        System.out.println("request = " + request);
-        System.out.println("username = " + username);
-
-        return "회원가입 성공";
     }
 }

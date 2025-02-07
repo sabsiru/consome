@@ -5,9 +5,8 @@ import com.consome.domain.PointHistory;
 import com.consome.domain.User;
 import com.consome.repository.CurrentPointRepository;
 import com.consome.repository.PointHistoryRepository;
-import com.consome.repository.UserRepository;
+import com.consome.repository.User.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +34,7 @@ public class UserService {
         //중복검증
         validateDuplicateUser(user);
 
-        //암호화 및 휴대폰번호 포맷 적용
+        //비밀번호 암호화
         User createUser = User.createUser(user.getLoginId(),
                 user.getNickname(),
                 user.getName(),
@@ -57,7 +56,7 @@ public class UserService {
 
     //로그인
     public User login(User user) {
-
+        userRepository.findByLoginId(user.getLoginId());
         return user;
     }
     //입력검증

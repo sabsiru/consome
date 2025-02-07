@@ -1,16 +1,13 @@
 <template>
   <v-app>
-    <!--    헤더-->
-    <v-container class="v-container">
+    <div>
+      <!--    헤더-->
       <Header />
-    </v-container>
-
-    <!--    메인-->
-    <v-container class="v-container">
+      <!--    메인-->
       <v-main>
         <router-view />
       </v-main>
-    </v-container>
+    </div>
   </v-app>
 </template>
 

@@ -2,7 +2,6 @@ package com.consome.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
@@ -33,23 +32,30 @@ public class User {
     private String phoneNumber; // 전화번호
 
     @Column(nullable = false)
-    private String password; // 비밀번호 (테스트용)
+    private String password; // 비밀번호
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role; // 사용자 권한
+    private Role role = Role.USER; // 사용자 권한
 
     private LocalDateTime createdAt; // 가입 날짜
 
     private LocalDateTime updatedAt; // 마지막 수정 날짜
 
+    /*정지 관련*/
+    @Enumerated(EnumType.STRING)
+    private BanType banType = BanType.NO; // 기본값: 정지 아님
+    private String banReason; // 정지 사유
+    private LocalDateTime banStartDate; // 정지 시작일
+    private LocalDateTime banEndDate;   // 정지 해제일
+
     protected User() {
 
     }
 
-    // 사용자 권한 Enum
-    public enum Role {
-        USER, ADMIN, SUPERADMIN
+    // 이용 정지 여부 확인 (NO 제외)
+    public boolean isBanned() {
+        return banType != BanType.NO && (banEndDate == null || banEndDate.isAfter(LocalDateTime.now()));
     }
 
     // 🔹 비밀번호 암호화 포함한 정적 생성 메서드
@@ -57,19 +63,18 @@ public class User {
         return new User(
                 loginId, nickname, name, email,
                 passwordEncoder.encode(rawPassword), // 비밀번호 암호화
-                phoneNumber, Role.USER, LocalDateTime.now()
+                phoneNumber, LocalDateTime.now()
         );
     }
 
     // 🔹 private 생성자 활용
-    private User(String loginId, String nickname, String name, String email, String password, String phoneNumber, Role role, LocalDateTime createdAt) {
+    private User(String loginId, String nickname, String name, String email, String password, String phoneNumber, LocalDateTime createdAt) {
         this.loginId = loginId;
         this.nickname = nickname;
         this.name = name;
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
-        this.role = role;
         this.createdAt = createdAt;
     }
 
