@@ -13,7 +13,7 @@ export default createVuetify({
       customTheme: {
         dark: false,
         colors: {
-          primary: colors.lightBlue.accent1,
+          primary: colors.lightBlue.lighten3,
           secondary: colors.lightBlue.darken1, // 어두운 회색
           accent: colors.blue.accent1, // 하얀색
           error: colors.red.accent3, // 빨간색 강조
@@ -27,6 +27,7 @@ export default createVuetify({
   },
   defaults: {
     VBtn: {
+      color: "primary",
       rounded: "md",
       style: "width: 80px",
       variant: "elevated"

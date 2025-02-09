@@ -29,9 +29,10 @@ class UserServiceTest {
     @Test
     public void 회원가입() throws Exception{
         //given
-        User user = User.createUser("test","test","jin","zero0515@gmail.com","1234","01091940785",passwordEncoder);
+        String ip = "127.0.0.1";
+        User user = User.createUser("test","test","zero0515@gmail.com","1234",passwordEncoder,ip);
         //when
-        User saveId = userService.register(user);
+        User saveId = userService.register(user,ip);
 
         //then
         User foundUser = userRepository.findById(saveId.getId()).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
@@ -42,12 +43,11 @@ class UserServiceTest {
     @Test
     public void 회원가입시포인트조회() throws Exception{
         //given
-        User user = User.createUser("zero0515","test","jin",
-                "zero0515@gmail.com","1234","01091940785",passwordEncoder
-        );
+        String ip = "127.0.0.1";
+        User user = User.createUser("test","test","zero0515@gmail.com","1234",passwordEncoder,ip);
 
         //when
-        User saveId = userService.register(user);
+        User saveId = userService.register(user,ip);
 
         //then
         PointHistory pointHistory = pointHistoryRepository.findByUserIdOrderByCreatedAtDesc(saveId.getId())
@@ -60,13 +60,14 @@ class UserServiceTest {
     @Test()
     public void 중복_아이디예외() throws Exception {
         //given
-        User user = User.createUser("zero0515","test","jin","zero0515@gmail.com","1234","01091940785",passwordEncoder);
-        User user2 = User.createUser("zero0515", "123", "123", "123@gmail.com", "1234", "01091940785",passwordEncoder);
-        User saveId = userService.register(user);
+        String ip = "127.0.0.1";
+        User user = User.createUser("test","test","zero0515@gmail.com","1234",passwordEncoder,ip);
+        User user2 = User.createUser("test","test1","zero05151@gmail.com","1234",passwordEncoder,ip);
+        User saveId = userService.register(user,ip);
 
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            userService.register(user2);//then
+            userService.register(user2,ip);//then
 
         });
         //then
@@ -76,12 +77,13 @@ class UserServiceTest {
     @Test
     public void 중복_이메일예외() throws Exception{
         //given
-        User user = User.createUser("zero0515","test","jin","zero0515@gmail.com","1234","01091940785",passwordEncoder);
-        User user2 = User.createUser("123", "123", "123", "zero0515@gmail.com", "1234", "01091950000",passwordEncoder);
-        User saveId = userService.register(user);
+        String ip = "127.0.0.1";
+        User user = User.createUser("test","test","zero0515@gmail.com","1234",passwordEncoder,ip);
+        User user2 = User.createUser("test1","test1","zero0515@gmail.com","1234",passwordEncoder,ip);
+        User saveId = userService.register(user,ip);
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            userService.register(user2);
+            userService.register(user2,ip);
         });
         //then
         assertEquals("이미 사용 중인 이메일입니다.", exception.getMessage());
@@ -90,47 +92,25 @@ class UserServiceTest {
     @Test
     public void 중복_닉네임예외() throws Exception{
         //given
-        User user = User.createUser("zero0515","test","jin","zero0515@gmail.com","1234","01091940785",passwordEncoder);
-        User user2 = User.createUser("123", "test", "123", "123@gmail.com", "1234", "01091950000",passwordEncoder);
-        User saveId = userService.register(user);
+        String ip = "127.0.0.1";
+        User user = User.createUser("test","test","zero0515@gmail.com","1234",passwordEncoder,ip);
+        User user2 = User.createUser("test1","test","zero05151@gmail.com","1234",passwordEncoder,ip);
+        User saveId = userService.register(user,ip);
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            userService.register(user2);
+            userService.register(user2,ip);
         });
         //then
         assertEquals("이미 사용 중인 닉네임입니다.", exception.getMessage());
     }
 
-    @Test
-    public void 중복_전화번호예외() throws Exception{
-        //given
-        User user = User.createUser("zero0515", "test", "jin", "zero0515@gmail.com", "1234", "01091940785",passwordEncoder);
-        User user2 = User.createUser("123", "123", "123", "123@gmail.com", "1234", "01091940785",passwordEncoder);
-        User saveId = userService.register(user);
-        //when
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            userService.register(user2);
-        });
-        //then
-        assertEquals("이미 사용 중인 전화번호입니다.", exception.getMessage());
-    }
-
-   @Test
-   public void 전화번호로_로그인아이디찾기() throws Exception{
-       //given
-       User user = User.createUser("zero0515", "test", "jin", "zero0515@gmail.com", "1234", "01091940785",passwordEncoder);
-        userService.register(user);
-       //when
-       String findId = userService.findLoginIdByPhoneNumber("01091940785");
-       //then
-       assertEquals("zero0515", findId);
-   }
 
    @Test
    public void 이메일로_로그인아이디찾기() throws Exception{
        //given
-       User user = User.createUser("zero0515", "test", "jin", "zero0515@gmail.com", "1234", "01091940785",passwordEncoder);
-       userService.register(user);
+       String ip = "127.0.0.1";
+       User user = User.createUser("test","test","zero0515@gmail.com","1234",passwordEncoder,ip);
+       userService.register(user,ip);
        //when
        User userByEmail = userService.findUserByEmail("zero0515@gmail.com");
        //then

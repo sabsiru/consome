@@ -27,8 +27,9 @@ class PointServiceTest {
     @Test
     public void 포인트_차감() throws Exception{
         //given
-        User user = User.createUser("zero0515","test","jin","zero0515@gmail.com","1234","01091940785",passwordEncoder);
-        User saveId = userService.register(user);
+        String ip="127.0.0.1";
+        User user = User.createUser("test","test","zero0515@gmail.com","1234",passwordEncoder,ip);
+        User saveId = userService.register(user,ip);
 
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,()-> {
@@ -42,8 +43,9 @@ class PointServiceTest {
     @Test
     public void 포인트_조회() throws Exception{
         //given
-        User user = User.createUser("zero0515","test","jin","zero0515@gmail.com","1234","01091940785",passwordEncoder);
-        User saveId = userService.register(user);
+        String ip="127.0.0.1";
+        User user = User.createUser("test","test","zero0515@gmail.com","1234",passwordEncoder,ip);
+        User saveId = userService.register(user,ip);
         pointService.updatePoint(saveId.getId(),-50,"테스트 차감");
         pointService.updatePoint(saveId.getId(),-30,"테스트 차감2");
 
