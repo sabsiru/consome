@@ -14,7 +14,6 @@ import java.util.Optional;
  */
 public interface UserRepository extends JpaRepository<User, Long> {
 
-
     /**
      * 로그인 ID로 사용자를 조회합니다.
      *
@@ -39,30 +38,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     Optional<User> findByNickname(String nickname);
 
-    /**
-     * 전화번호로 사용자를 조회합니다.
-     *
-     * @param phoneNumber 사용자 전화번호
-     * @return 전화번호에 해당하는 사용자
-     */
-    Optional<User> findByPhoneNumber(String phoneNumber);
 
     boolean existsByLoginId(String loginId);
     boolean existsByEmail(String email);
     boolean existsByNickname(String nickname);
-    boolean existsByPhoneNumber(String phoneNumber);
-    /**
-     * 전화번호로 사용자 ID를 조회
-     *
-     * @param phoneNumber
-     * @return 사용자 ID
-     * @query 어노테이션을 사용해서 직접 쿼리 작성 및 원하는 값만 뽑는 예시 용으로 작성
-     * */
 
-    @Query("select u.loginId from User u where u.phoneNumber = :phoneNumber")
-    Optional<String> findLoginIdByPhoneNumber(
-            String phoneNumber);
-
-    @Query("select COUNT(u) FROM User u where u.loginId = :loginId AND u.password=  :password")
-    int countByLoginIdAndPassword(@Param("loginId") String loginId, @Param("password") String password);
 }

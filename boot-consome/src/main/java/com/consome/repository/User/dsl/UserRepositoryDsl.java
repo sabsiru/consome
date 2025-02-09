@@ -6,6 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
@@ -31,5 +32,25 @@ public class UserRepositoryDsl {
                         )
                         .fetchOne()
         );
+    }
+
+
+    /**
+     * 특정 IP에서 최근 24시간 이내 가입한 사용자가 있는지 확인
+     */
+    public boolean existsRecentSignupByIp(String ip) {
+        QUser user = QUser.user;
+
+        // 24시간 이내 가입한 사용자 검색
+        Long count = queryFactory
+                .select(user.count())
+                .from(user)
+                .where(
+                        user.lastSignupIp.eq(ip),
+                        user.createdAt.after(LocalDateTime.now().minusHours(24)) // 24시간 내 가입 여부
+                )
+                .fetchOne();
+
+        return count != null && count > 0;
     }
 }

@@ -1,13 +1,16 @@
 package com.consome.controller;
 
+import com.consome.auth.JwtUtil;
 import com.consome.domain.User;
+import com.consome.dto.request.LoginRequest;
+import com.consome.dto.response.UserResponse;
 import com.consome.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -15,16 +18,36 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
+    private final JwtUtil jwtUtil;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody User user) {
+    public ResponseEntity<?> signup(@RequestBody User user, HttpServletRequest request) {
+        String ip = request.getRemoteAddr();
         try {
-            User userId = userService.register(user);
+            User userId = userService.register(user,ip);
             return ResponseEntity.ok("회원가입 성공. 감사합니다.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버 오류 발생");
         }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UserResponse> login(@RequestBody LoginRequest request) {
+        UserResponse userResponse = userService.login(request);
+
+        // ✅ JWT 토큰 생성
+        String accessToken = jwtUtil.generateAccessToken(userResponse.getLoginId());
+        String refreshToken = jwtUtil.generateRefreshToken(userResponse.getLoginId());
+
+        // ✅ Authorization 헤더 설정 (Bearer 토큰)
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + accessToken);
+        headers.add("Refresh-Token", refreshToken);  // Refresh 토큰은 프론트에서 필요하면 사용
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(userResponse);
     }
 }
