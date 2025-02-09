@@ -1,4 +1,4 @@
-package com.consome.security;
+package com.consome.auth;
 
 import com.consome.config.CorsConfig;
 import org.springframework.context.annotation.Bean;
