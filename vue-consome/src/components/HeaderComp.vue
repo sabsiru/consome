@@ -25,7 +25,7 @@
           <v-card>
             <v-card-title class="text-h5"></v-card-title>
             <v-card-text>
-              <SignupPage />
+              <SignupPage @closeSignup="signupDialog = false" />
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>

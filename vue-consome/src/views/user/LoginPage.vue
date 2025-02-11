@@ -18,7 +18,16 @@
 
           <v-btn color="primary" block type="submit" :loading="loading">로그인</v-btn>
 
-          <v-alert v-if="errorMessage" type="error" class="mt-2">{{ errorMessage }}</v-alert>
+          <!--          <v-alert v-if="errorMessage" type="error" class="mt-2" closable>{{ errorMessage }}</v-alert>-->
+
+          <v-snackbar v-model="showSnackbar" :timeout="3000" color="error" location="top">
+            <span style="white-space: pre-line">
+              {{ errorMessage }}
+            </span>
+            <template v-slot:actions>
+              <v-btn color="white" text @click="showSnackbar = false">닫기</v-btn>
+            </template>
+          </v-snackbar>
         </v-form>
       </v-card-text>
     </v-card>
@@ -35,6 +44,7 @@ const loginId = ref("");
 const password = ref("");
 const loading = ref(false);
 const errorMessage = ref("");
+const showSnackbar = ref(false);
 
 const requiredRule = (v: string) => !!v || "필수 입력 항목입니다.";
 
@@ -54,7 +64,8 @@ const handleLogin = async () => {
       window.location.href = "/"; // ✅ 새로고침 후 메인으로 이동
     }
   } catch (error) {
-    alert("로그인 실패: " + error.response.data);
+    errorMessage.value = error.response.data;
+    showSnackbar.value = true;
   } finally {
     loading.value = false;
   }

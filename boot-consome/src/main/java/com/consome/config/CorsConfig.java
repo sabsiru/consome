@@ -16,7 +16,7 @@ public class CorsConfig {
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
-        String domain = "https://e068-118-91-7-41.ngrok-free.app/";
+        String domain = "https://8579-118-91-7-41.ngrok-free.app/";
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {

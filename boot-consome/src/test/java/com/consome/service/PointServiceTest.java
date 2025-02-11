@@ -4,8 +4,10 @@ import com.consome.domain.User;
 import com.consome.repository.CurrentPointRepository;
 import com.consome.repository.PointHistoryRepository;
 import com.consome.repository.User.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -27,9 +29,10 @@ class PointServiceTest {
     @Test
     public void 포인트_차감() throws Exception{
         //given
-        String ip="127.0.0.1";
-        User user = User.createUser("test","test","zero0515@gmail.com","1234",passwordEncoder,ip);
-        User saveId = userService.register(user,ip);
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        String clientIp = userService.getClientIp(request);
+        User user = new User("test123","testnick","test@gmail.com","1234");
+        User saveId = userService.register(user,request);
 
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,()-> {
@@ -43,9 +46,10 @@ class PointServiceTest {
     @Test
     public void 포인트_조회() throws Exception{
         //given
-        String ip="127.0.0.1";
-        User user = User.createUser("test","test","zero0515@gmail.com","1234",passwordEncoder,ip);
-        User saveId = userService.register(user,ip);
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        String clientIp = userService.getClientIp(request);
+        User user = new User("test123","testnick","test@gmail.com","1234");
+        User saveId = userService.register(user,request);
         pointService.updatePoint(saveId.getId(),-50,"테스트 차감");
         pointService.updatePoint(saveId.getId(),-30,"테스트 차감2");
 

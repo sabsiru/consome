@@ -75,6 +75,13 @@ public class User {
         );
     }
 
+    public User(String loginId,String nickname,String email,String password){
+        this.loginId = loginId;
+        this.nickname = nickname;
+        this.email = email;
+        this.password = password;
+    }
+
     // 🔹 private 생성자 활용
     private User(String loginId, String nickname, String email, String password, LocalDateTime createdAt, String ip) {
         this.loginId = loginId;

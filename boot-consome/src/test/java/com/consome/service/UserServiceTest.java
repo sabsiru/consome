@@ -5,8 +5,10 @@ import com.consome.domain.User;
 import com.consome.repository.CurrentPointRepository;
 import com.consome.repository.PointHistoryRepository;
 import com.consome.repository.User.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,10 +31,11 @@ class UserServiceTest {
     @Test
     public void 회원가입() throws Exception{
         //given
-        String ip = "127.0.0.1";
-        User user = User.createUser("test","test","zero0515@gmail.com","1234",passwordEncoder,ip);
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        String clientIp = userService.getClientIp(request);
+        User user = new User("test123","testnick","test@gmail.com","1234");
         //when
-        User saveId = userService.register(user,ip);
+        User saveId = userService.register(user,request);
 
         //then
         User foundUser = userRepository.findById(saveId.getId()).orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
@@ -43,11 +46,11 @@ class UserServiceTest {
     @Test
     public void 회원가입시포인트조회() throws Exception{
         //given
-        String ip = "127.0.0.1";
-        User user = User.createUser("test","test","zero0515@gmail.com","1234",passwordEncoder,ip);
-
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        String clientIp = userService.getClientIp(request);
+        User user = new User("test123","testnick","test@gmail.com","1234");
         //when
-        User saveId = userService.register(user,ip);
+        User saveId = userService.register(user,request);
 
         //then
         PointHistory pointHistory = pointHistoryRepository.findByUserIdOrderByCreatedAtDesc(saveId.getId())
@@ -60,57 +63,64 @@ class UserServiceTest {
     @Test()
     public void 중복_아이디예외() throws Exception {
         //given
-        String ip = "127.0.0.1";
-        User user = User.createUser("test","test","zero0515@gmail.com","1234",passwordEncoder,ip);
-        User user2 = User.createUser("test","test1","zero05151@gmail.com","1234",passwordEncoder,ip);
-        User saveId = userService.register(user,ip);
 
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        String clientIp = userService.getClientIp(request);
+        User user = new User("test123","testnick","test@gmail.com","1234");
+        userService.register(user,request);
+        
+        User user2 = new User("test123","test","tes1t@gmail.com","1234");
+        
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            userService.register(user2,ip);//then
+            userService.register(user2,request);//then
 
         });
         //then
-        assertEquals("이미 사용 중인 로그인 ID입니다.", exception.getMessage());
+        assertEquals("사용 중인 로그인 ID입니다.", exception.getMessage());
     }
 
     @Test
     public void 중복_이메일예외() throws Exception{
         //given
-        String ip = "127.0.0.1";
-        User user = User.createUser("test","test","zero0515@gmail.com","1234",passwordEncoder,ip);
-        User user2 = User.createUser("test1","test1","zero0515@gmail.com","1234",passwordEncoder,ip);
-        User saveId = userService.register(user,ip);
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        String clientIp = userService.getClientIp(request);
+        User user = new User("test123","testnick","test@gmail.com","1234");
+        User user2 = new User("test","test","test@gmail.com","1234");
+        User saveId = userService.register(user,request);
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            userService.register(user2,ip);
+            userService.register(user2,request);
         });
         //then
-        assertEquals("이미 사용 중인 이메일입니다.", exception.getMessage());
+        assertEquals("사용 중인 이메일입니다.", exception.getMessage());
     }
 
     @Test
     public void 중복_닉네임예외() throws Exception{
         //given
-        String ip = "127.0.0.1";
-        User user = User.createUser("test","test","zero0515@gmail.com","1234",passwordEncoder,ip);
-        User user2 = User.createUser("test1","test","zero05151@gmail.com","1234",passwordEncoder,ip);
-        User saveId = userService.register(user,ip);
+        HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+        String clientIp = userService.getClientIp(request);
+        User user = new User("test123","testnick","test@gmail.com","1234");
+        User user2 = new User("ㅅㄷㄴㅅ","testnick","tes123t@gmail.com","1234");
+        User saveId = userService.register(user,request);
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            userService.register(user2,ip);
+            userService.register(user2,request);
         });
         //then
-        assertEquals("이미 사용 중인 닉네임입니다.", exception.getMessage());
+        assertEquals("사용 중인 닉네임입니다.", exception.getMessage());
     }
 
 
    @Test
    public void 이메일로_로그인아이디찾기() throws Exception{
        //given
-       String ip = "127.0.0.1";
-       User user = User.createUser("test","test","zero0515@gmail.com","1234",passwordEncoder,ip);
-       userService.register(user,ip);
+       HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
+       String clientIp = userService.getClientIp(request);
+       User user = new User("test123","testnick","test@gmail.com","1234");
+       userService.register(user,request);
+
        //when
        User userByEmail = userService.findUserByEmail("zero0515@gmail.com");
        //then
