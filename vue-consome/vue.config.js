@@ -1,7 +1,6 @@
 const { defineConfig } = require("@vue/cli-service");
 module.exports = defineConfig({
   transpileDependencies: true,
-
   devServer: {
     client: {
       logging: "info",
@@ -10,11 +9,11 @@ module.exports = defineConfig({
       reconnect: 3
     },
     proxy: {
-      "/": {
+      "/api": {
         target: "http://localhost:8080",
         changeOrigin: true,
         logLevel: "debug",
-        ws: true,
+        ws: false,
         secure: false,
         pathRewrite: { "^/": "" }
       }
@@ -25,9 +24,9 @@ module.exports = defineConfig({
       // https://github.com/vuetifyjs/vuetify-loader/tree/next/packages/vuetify-loader
     }
   },
-  chainWebpack: config => {
-    config.plugin('html').tap(args => {
-      args[0].favicon = 'public/logo.svg';
+  chainWebpack: (config) => {
+    config.plugin("html").tap((args) => {
+      args[0].favicon = "public/logo.svg";
       return args;
     });
   }
