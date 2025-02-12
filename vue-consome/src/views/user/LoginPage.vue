@@ -4,21 +4,21 @@
       <v-card-title class="text-h5 text-center">로그인</v-card-title>
       <v-card-text>
         <v-form ref="loginForm" @submit.prevent="handleLogin">
-          <v-text-field v-model="loginId" label="아이디" :rules="[requiredRule]" density="compact" min-width="300" outlined></v-text-field>
+          <v-text-field v-model="loginId" label="아이디" density="compact" min-width="300" outlined></v-text-field>
 
-          <v-text-field
-            v-model="password"
-            label="비밀번호"
-            type="password"
-            :rules="[requiredRule]"
-            density="compact"
-            min-width="300"
-            outlined
-          ></v-text-field>
+          <v-text-field v-model="password" label="비밀번호" type="password" density="compact" min-width="300" outlined></v-text-field>
 
-          <v-btn color="primary" block type="submit" :loading="loading">로그인</v-btn>
-
-          <!--          <v-alert v-if="errorMessage" type="error" class="mt-2" closable>{{ errorMessage }}</v-alert>-->
+          <v-btn block color="secondary" type="submit" density="comfortable" variant="elevated" :loading="loading">로그인 </v-btn>
+          <!-- 아이디 찾기 & 비밀번호 찾기 버튼 (가로 정렬) -->
+          <v-row class="mt-2 justify-center">
+            <v-col cols="5">
+              <v-btn text to="/user/findLoginId" variant="plain" block color="black" density="compact">아이디 찾기</v-btn>
+            </v-col>
+            <v-col cols="1">|</v-col>
+            <v-col cols="5">
+              <v-btn text to="/user/findPassword" variant="plain" block color="black" density="compact">비밀번호 찾기</v-btn>
+            </v-col>
+          </v-row>
 
           <v-snackbar v-model="showSnackbar" :timeout="3000" color="error" location="top">
             <span style="white-space: pre-line">
@@ -45,8 +45,6 @@ const password = ref("");
 const loading = ref(false);
 const errorMessage = ref("");
 const showSnackbar = ref(false);
-
-const requiredRule = (v: string) => !!v || "필수 입력 항목입니다.";
 
 const handleLogin = async () => {
   loading.value = true;

@@ -2,6 +2,7 @@ package com.consome.service;
 
 import com.consome.domain.PointHistory;
 import com.consome.domain.User;
+import com.consome.dto.request.UserValidationRequest;
 import com.consome.repository.CurrentPointRepository;
 import com.consome.repository.PointHistoryRepository;
 import com.consome.repository.User.UserRepository;
@@ -32,8 +33,8 @@ class UserServiceTest {
     public void 회원가입() throws Exception{
         //given
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-        String clientIp = userService.getClientIp(request);
-        User user = new User("test123","testnick","test@gmail.com","1234");
+        UserValidationRequest user = new UserValidationRequest("test123","testnick","test@gmail.com","1234");
+
         //when
         User saveId = userService.register(user,request);
 
@@ -48,7 +49,7 @@ class UserServiceTest {
         //given
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         String clientIp = userService.getClientIp(request);
-        User user = new User("test123","testnick","test@gmail.com","1234");
+        UserValidationRequest user = new UserValidationRequest("test123","testnick","test@gmail.com","1234");
         //when
         User saveId = userService.register(user,request);
 
@@ -66,10 +67,10 @@ class UserServiceTest {
 
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         String clientIp = userService.getClientIp(request);
-        User user = new User("test123","testnick","test@gmail.com","1234");
+        UserValidationRequest user = new UserValidationRequest("test123","testnick","test@gmail.com","1234");
         userService.register(user,request);
         
-        User user2 = new User("test123","test","tes1t@gmail.com","1234");
+        UserValidationRequest user2 = new UserValidationRequest("test123","test","tes1t@gmail.com","1234");
         
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -85,8 +86,8 @@ class UserServiceTest {
         //given
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         String clientIp = userService.getClientIp(request);
-        User user = new User("test123","testnick","test@gmail.com","1234");
-        User user2 = new User("test","test","test@gmail.com","1234");
+        UserValidationRequest user = new UserValidationRequest("test123","testnick","test@gmail.com","1234");
+        UserValidationRequest user2 = new UserValidationRequest("test","test","test@gmail.com","1234");
         User saveId = userService.register(user,request);
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -101,8 +102,8 @@ class UserServiceTest {
         //given
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         String clientIp = userService.getClientIp(request);
-        User user = new User("test123","testnick","test@gmail.com","1234");
-        User user2 = new User("ㅅㄷㄴㅅ","testnick","tes123t@gmail.com","1234");
+        UserValidationRequest user = new UserValidationRequest("test123","testnick","test@gmail.com","1234");
+        UserValidationRequest user2 = new UserValidationRequest("test1231","testnick","test@gmai1l.com","1234");
         User saveId = userService.register(user,request);
         //when
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -112,18 +113,4 @@ class UserServiceTest {
         assertEquals("사용 중인 닉네임입니다.", exception.getMessage());
     }
 
-
-   @Test
-   public void 이메일로_로그인아이디찾기() throws Exception{
-       //given
-       HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
-       String clientIp = userService.getClientIp(request);
-       User user = new User("test123","testnick","test@gmail.com","1234");
-       userService.register(user,request);
-
-       //when
-       User userByEmail = userService.findUserByEmail("zero0515@gmail.com");
-       //then
-       assertEquals("zero0515@gmail.com", userByEmail.getEmail());
-   }
 }

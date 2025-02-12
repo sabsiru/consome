@@ -54,5 +54,31 @@ public class UserRepositoryDsl {
         return count != null && count > 0;
     }
 
+    /**
+    * loginId와 email로 count 조회
+    * */
+    public long countByLoginIdAndEmail(String loginId, String email) {
+        QUser user = QUser.user;
+        return queryFactory
+                .select(user.count())
+                .from(user)
+                .where(user.loginId.eq(loginId)
+                        .and(user.email.eq(email))
+                )
+                .fetchOne();
+    }
+
+    /**
+    * loginId, email, password update
+    * */
+    public long updatePassword(String loginId, String email, String newPassword) {
+        QUser user = QUser.user;
+        return queryFactory
+                .update(user)
+                .set(user.password, newPassword) // ✅ 비밀번호 업데이트
+                .where(user.loginId.eq(loginId) // ✅ 첫 번째 조건
+                        .and(user.email.eq(email))) // ✅ 두 번째 조건
+                .execute();
+    }
 
 }

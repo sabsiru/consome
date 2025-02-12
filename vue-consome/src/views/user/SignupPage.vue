@@ -54,7 +54,7 @@
             {{ emailStatus.message }}
           </p>
           <v-text-field
-            v-model="user.password"
+            v-model="user.password1"
             label="비밀번호"
             type="password"
             class="mt-3"
@@ -70,7 +70,25 @@
           <p v-if="passwordStatus.message" :class="passwordStatus.colorClass">
             {{ passwordStatus.message }}
           </p>
-          <v-btn color="primary" type="submit" :disabled="!isSignupEnabled" class="mt-3" :loading="loading">회원가입</v-btn>
+
+          <v-text-field
+            v-model="user.password2"
+            label="비밀번호 확인"
+            type="password"
+            class="mt-3"
+            density="comfortable"
+            variant="underlined"
+            placeholder="비밀번호를 똑같이 입력해주세요."
+            @blur="checkPassword"
+          >
+            <template #append-inner>
+              <v-icon :color="passwordStatus.color2">{{ passwordStatus.icon }}</v-icon>
+            </template>
+          </v-text-field>
+          <p v-if="passwordStatus.message2" :class="passwordStatus.colorClass2">
+            {{ passwordStatus.message2 }}
+          </p>
+          <v-btn block color="primary" variant="elevated" type="submit" :disabled="!isSignupEnabled" class="mt-3" :loading="loading">회원가입 </v-btn>
         </v-form>
       </v-card-text>
     </v-card>
@@ -108,38 +126,61 @@ const user = ref({
   loginId: "",
   nickname: "",
   email: "",
-  password: ""
+  password1: "",
+  password2: ""
 });
 
+const password1 = ref("");
+const password2 = ref("");
+
 // 검증 상태 (아이콘 및 색상)
-const loginIdStatus = ref({ icon: "mdi-help-circle", color: "gray", message: "", colorClass: "" });
-const nicknameStatus = ref({ icon: "mdi-help-circle", color: "gray", message: "", colorClass: "" });
-const emailStatus = ref({ icon: "mdi-help-circle", color: "gray", message: "", colorClass: "" });
-const passwordStatus = ref({ icon: "mdi-help-circle", color: "gray", message: "", colorClass: "" });
+const loginIdStatus = ref({ available: false, icon: "mdi-help-circle", color: "gray", message: "", colorClass: "" });
+const nicknameStatus = ref({ available: false, icon: "mdi-help-circle", color: "gray", message: "", colorClass: "" });
+const emailStatus = ref({ available: false, icon: "mdi-help-circle", color: "gray", message: "", colorClass: "" });
+const passwordStatus = ref({
+  available: false,
+  icon: "mdi-help-circle",
+  color: "gray",
+  color2: "gray",
+  message: "",
+  message2: "",
+  colorClass: "",
+  colorClass2: ""
+});
 
 // 필드 값이 초기화되면 상태도 초기화
 watch(
   () => user.value.loginId,
   (newValue) => {
-    if (!newValue) loginIdStatus.value = { icon: "mdi-help-circle", color: "gray", message: "", colorClass: "" };
+    if (!newValue) loginIdStatus.value = { available: false, icon: "mdi-help-circle", color: "gray", message: "", colorClass: "" };
   }
 );
 watch(
   () => user.value.nickname,
   (newValue) => {
-    if (!newValue) nicknameStatus.value = { icon: "mdi-help-circle", color: "gray", message: "", colorClass: "" };
+    if (!newValue) nicknameStatus.value = { available: false, icon: "mdi-help-circle", color: "gray", message: "", colorClass: "" };
   }
 );
 watch(
   () => user.value.email,
   (newValue) => {
-    if (!newValue) emailStatus.value = { icon: "mdi-help-circle", color: "gray", message: "", colorClass: "" };
+    if (!newValue) emailStatus.value = { available: false, icon: "mdi-help-circle", color: "gray", message: "", colorClass: "" };
   }
 );
 watch(
-  () => user.value.password,
+  () => user.value.password1,
   (newValue) => {
-    if (!newValue) passwordStatus.value = { icon: "mdi-help-circle", color: "gray", message: "", colorClass: "" };
+    if (!newValue)
+      passwordStatus.value = {
+        available: false,
+        icon: "mdi-help-circle",
+        color: "gray",
+        color2: "gray",
+        message: "",
+        message2: "",
+        colorClass: "",
+        colorClass2: ""
+      };
   }
 );
 // 중복 검사 함수
@@ -147,9 +188,13 @@ const checkLoginId = async () => {
   if (!user.value.loginId) return;
   try {
     const response = await axios.post("/user/validLoginId", { loginId: user.value.loginId });
-    loginIdStatus.value = response.data.available
-      ? { icon: "mdi-check-circle", color: "green", message: response.data.message, colorClass: "success-text" } // 사용 가능
-      : { icon: "mdi-close-circle", color: "red", message: response.data.message, colorClass: "error-text" }; // 중복됨
+    loginIdStatus.value = {
+      available: response.data.available, // ✅ 서버 응답 값 저장
+      icon: response.data.available ? "mdi-check-circle" : "mdi-close-circle",
+      color: response.data.available ? "green" : "red",
+      message: response.data.available ? response.data.message : response.data.message,
+      colorClass: response.data.available ? "success-text" : "error-text"
+    };
   } catch (error) {
     console.error(error);
   }
@@ -159,14 +204,13 @@ const checkNickname = async () => {
   if (!user.value.nickname) return;
   try {
     const response = await axios.post("/user/validNickname", { nickname: user.value.nickname });
-    nicknameStatus.value = response.data.available
-      ? {
-          icon: "mdi-check-circle",
-          color: "green",
-          message: response.data.message,
-          colorClass: "success-text"
-        }
-      : { icon: "mdi-close-circle", color: "red", message: response.data.message, colorClass: "error-text" };
+    nicknameStatus.value = {
+      available: response.data.available, // ✅ 서버 응답 값 저장
+      icon: response.data.available ? "mdi-check-circle" : "mdi-close-circle",
+      color: response.data.available ? "green" : "red",
+      message: response.data.available ? response.data.message : response.data.message,
+      colorClass: response.data.available ? "success-text" : "error-text"
+    };
   } catch (error) {
     console.error(error);
   }
@@ -176,31 +220,35 @@ const checkEmail = async () => {
   if (!user.value.email) return;
   try {
     const response = await axios.post("/user/validEmail", { email: user.value.email });
-    emailStatus.value = response.data.available
-      ? {
-          icon: "mdi-check-circle",
-          color: "green",
-          message: response.data.message,
-          colorClass: "success-text"
-        }
-      : { icon: "mdi-close-circle", color: "red", message: response.data.message, colorClass: "error-text" };
+    emailStatus.value = {
+      available: response.data.available, // ✅ 서버 응답 값 저장
+      icon: response.data.available ? "mdi-check-circle" : "mdi-close-circle",
+      color: response.data.available ? "green" : "red",
+      message: response.data.available ? response.data.message : response.data.message,
+      colorClass: response.data.available ? "success-text" : "error-text"
+    };
   } catch (error) {
     console.error(error);
   }
 };
 
 const checkPassword = async () => {
-  if (!user.value.password) return;
+  if (!user.value.password1) return;
   try {
-    const response = await axios.post("/user/validPassword", { password: user.value.password });
-    passwordStatus.value = response.data.available
-      ? {
-          icon: "mdi-check-circle",
-          color: "green",
-          message: response.data.message,
-          colorClass: "success-text"
-        }
-      : { icon: "mdi-close-circle", color: "red", message: response.data.message, colorClass: "error-text" };
+    const response = await axios.post("/user/validPassword", {
+      password1: user.value.password1,
+      password2: user.value.password2
+    });
+    passwordStatus.value = {
+      available: response.data.available, // ✅ 서버 응답 값 저장
+      icon: response.data.available ? "mdi-check-circle" : "mdi-close-circle",
+      color: response.data.available ? response.data.color : response.data.color,
+      color2: response.data.available ? response.data.color2 : response.data.color2,
+      message: response.data.available ? response.data.message : response.data.message,
+      message2: response.data.available ? response.data.message2 : response.data.message2,
+      colorClass: response.data.available ? response.data.colorClass : response.data.colorClass,
+      colorClass2: response.data.available ? response.data.colorClass2 : response.data.colorClass2
+    };
   } catch (error) {
     console.error(error);
   }
@@ -209,10 +257,10 @@ const checkPassword = async () => {
 // 모든 검증이 완료되었는지 확인
 const isSignupEnabled = computed(() => {
   return (
-    loginIdStatus.value.color === "green" &&
-    nicknameStatus.value.color === "green" &&
-    emailStatus.value.color === "green" &&
-    passwordStatus.value.color === "green"
+    loginIdStatus.value.available === true &&
+    nicknameStatus.value.available === true &&
+    emailStatus.value.available === true &&
+    passwordStatus.value.available === true
   );
 });
 

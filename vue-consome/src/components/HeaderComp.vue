@@ -14,12 +14,13 @@
           <div v-else>
             <span>{{ user?.nickname }}님 환영합니다. 포인트: {{ user?.point }}</span>
           </div>
-          <v-btn text @click="logout">로그아웃</v-btn>
+          <v-btn text @click="logout" color="secondary" density="compact" variant="elevated" class="ml-2">로그아웃</v-btn>
         </div>
         <div v-else>
-          <v-btn text to="/user/login" class="mr-1" density="comfortable">로그인</v-btn>
-          <v-btn text @click="signupDialog = true" density="comfortable">회원가입</v-btn>
+          <v-btn text to="/user/login" class="mr-1" density="compact" color="secondary" variant="elevated">로그인</v-btn>
+          <v-btn text @click="signupDialog = true" density="compact" color="secondary" variant="elevated">회원가입</v-btn>
         </div>
+
         <!-- 회원가입 모달 -->
         <v-dialog v-model="signupDialog" width="600">
           <v-card>

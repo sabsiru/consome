@@ -1,6 +1,7 @@
 package com.consome.service;
 
 import com.consome.domain.User;
+import com.consome.dto.request.UserValidationRequest;
 import com.consome.repository.CurrentPointRepository;
 import com.consome.repository.PointHistoryRepository;
 import com.consome.repository.User.UserRepository;
@@ -31,7 +32,7 @@ class PointServiceTest {
         //given
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         String clientIp = userService.getClientIp(request);
-        User user = new User("test123","testnick","test@gmail.com","1234");
+        UserValidationRequest user = new UserValidationRequest("test123","testnick","test@gmail.com","1234");
         User saveId = userService.register(user,request);
 
         //when
@@ -48,7 +49,7 @@ class PointServiceTest {
         //given
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         String clientIp = userService.getClientIp(request);
-        User user = new User("test123","testnick","test@gmail.com","1234");
+        UserValidationRequest user = new UserValidationRequest("test123","testnick","test@gmail.com","1234");
         User saveId = userService.register(user,request);
         pointService.updatePoint(saveId.getId(),-50,"테스트 차감");
         pointService.updatePoint(saveId.getId(),-30,"테스트 차감2");

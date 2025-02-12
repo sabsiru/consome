@@ -5,6 +5,7 @@ import com.consome.domain.CurrentPoint;
 import com.consome.domain.PointHistory;
 import com.consome.domain.User;
 import com.consome.dto.request.LoginRequest;
+import com.consome.dto.request.UserValidationRequest;
 import com.consome.dto.response.UserResponse;
 import com.consome.repository.CurrentPointRepository;
 import com.consome.repository.PointHistoryRepository;
@@ -12,6 +13,7 @@ import com.consome.repository.User.UserRepository;
 import com.consome.repository.User.dsl.UserRepositoryDsl;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,13 +39,13 @@ public class UserService {
 
     // 회원가입
     @Transactional
-    public User register(User user,HttpServletRequest request) {
+    public User register(UserValidationRequest user, HttpServletRequest request) {
 
         //입력 및 중복검증
         validateLoginId(user.getLoginId());
         validateNickname(user.getNickname());
         validateEmail(user.getEmail());
-        validatePassword(user.getPassword());
+        validatePassword(user.getPassword1(), user.getPassword2()); //2는 입력 비교용
         String clientIp = getClientIp(request);
 
 //        // ✅ 같은 IP에서 24시간 내 가입된 사용자 확인
@@ -55,10 +57,10 @@ public class UserService {
         User createUser = User.createUser(user.getLoginId(),
                 user.getNickname(),
                 user.getEmail(),
-                user.getPassword(),
-                passwordEncoder,clientIp);
+                user.getPassword1(),
+                passwordEncoder, clientIp);
 
-       userRepository.save(createUser);
+        userRepository.save(createUser);
 
         CurrentPoint currentPoint = CurrentPoint.initCurrentPoint(createUser);
         PointHistory pointHistory = PointHistory.createInitPointHistory(createUser);
@@ -86,10 +88,10 @@ public class UserService {
         }
 
         //밴 유무
-        if(user.isBanned()){
+        if (user.isBanned()) {
             throw new IllegalArgumentException("일시 정지된 사용자 입니다.\n" +
-                    "정지 사유 : "+user.getBanReason()+"\n" +
-                    "해제 날짜 : "+user.getBanEndDate());
+                    "정지 사유 : " + user.getBanReason() + "\n" +
+                    "해제 날짜 : " + user.getBanEndDate());
         }
 
         // JWT 생성
@@ -97,7 +99,7 @@ public class UserService {
         String refreshToken = jwtUtil.generateRefreshToken(user.getLoginId());
 
         // 유저 정보 반환 (토큰 포함)
-        return UserResponse.fromEntity(user, accessToken,refreshToken);
+        return UserResponse.fromEntity(user, accessToken, refreshToken);
     }
 
     // 아이디 검증 및 중복 검사 (공백 포함 필터링 추가)
@@ -148,7 +150,7 @@ public class UserService {
         int charLength = nickname.length();
         boolean isKorean = Pattern.matches(".*[가-힣].*", nickname); // 한글 포함 여부
 
-        if ((isKorean && charLength > 10 ||(isKorean && charLength< 2)) || (!isKorean && byteLength > 10 || (!isKorean && byteLength <4))) {
+        if ((isKorean && charLength > 10 || (isKorean && charLength < 2)) || (!isKorean && byteLength > 10 || (!isKorean && byteLength < 4))) {
             response.put("available", false);
             response.put("message", "닉네임은 2~10자의 한글, 영문 그리고 숫자의 조합만 사용 가능합니다.");
             return response;
@@ -169,14 +171,14 @@ public class UserService {
     public Map<String, Object> validateEmail(String email) {
         Map<String, Object> response = new HashMap<>();
 
-        // 1️공백 또는 NULL 확인
+        // 공백 또는 NULL 확인
         if (email == null || email.isBlank()) {
             response.put("available", false);
             response.put("message", "이메일을 입력해주세요.");
             return response;
         }
 
-        // 2️이메일 형식 검사 (RFC 5322)
+        // 이메일 형식 검사 (RFC 5322)
         String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
         if (!Pattern.matches(emailRegex, email)) {
             response.put("available", false);
@@ -184,7 +186,7 @@ public class UserService {
             return response;
         }
 
-        // 3️중복 검사
+        // 중복 검사
         boolean exists = userRepository.existsByEmail(email);
         if (exists) {
             response.put("available", false);
@@ -197,25 +199,46 @@ public class UserService {
         return response;
     }
 
-    public Map<String, Object> validatePassword(String password) {
+    public Map<String, Object> validatePassword(String password1, String password2) {
         Map<String, Object> response = new HashMap<>();
-        System.out.println("password = " + password);
         // 공백 또는 null 확인
-        if (password == null || password.isBlank()) {
+        if (password1 == null || password1.isBlank()) {
             response.put("available", false);
             response.put("message", "비밀번호를 입력해주세요.");
         }
-
         //비밀번호 형식 검사
-        String passwordRegex="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+{}:;<>,.?~])[A-Za-z\\d!@#$%^&*()_+{}:;<>,.?~]{8,}$";
-        if(!Pattern.matches(passwordRegex, password)) {
-            response.put("available", false);
-            response.put("message","비밀번호는 대소문자, 숫자, 특수문자를 포함한 8자 이상이어야 합니다.");
-        } else {
-            response.put("available", true);
-            response.put("message", "비밀번호 보안성 확인");
-        }
+        String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+{}:;<>,.?~])[A-Za-z\\d!@#$%^&*()_+{}:;<>,.?~]{8,}$";
 
+        boolean isPassword1Valid = Pattern.matches(passwordRegex, password1);
+        boolean isPassword2Entered = !password2.isEmpty();
+        boolean isPasswordMatch = password1.equals(password2);
+
+        // 기본 응답 초기화
+        response.put("available", false);
+        response.put("message", "비밀번호는 대소문자, 숫자, 특수문자를 포함한 8자 이상이어야 합니다.");
+        response.put("color", "red");
+        response.put("colorClass", "error-text");
+
+        // `password2` 관련 메시지는 입력되었을 때만 추가하도록 초기화하지 않음
+        if (isPassword1Valid) {
+            response.put("message", "사용 가능한 비밀번호 입니다.");
+            response.put("color", "green");
+            response.put("colorClass", "success-text");
+
+            // `password2`가 입력되었을 때만 메시지 추가
+            if (isPassword2Entered) {
+                if (isPasswordMatch) {
+                    response.put("available", true);
+                    response.put("message2", "비밀번호가 일치 합니다.");
+                    response.put("color2", "green");
+                    response.put("colorClass2", "success-text");
+                } else {
+                    response.put("message2", "비밀번호를 똑같이 입력해 주세요.");
+                    response.put("color2", "red");
+                    response.put("colorClass2", "error-text");
+                }
+            }
+        }
         return response;
     }
 
@@ -247,12 +270,60 @@ public class UserService {
      *
      * @param email
      * @return 사용자ID
-     * @throws IllegalArgumentException 사용자가 존재하지 않을 경우 예외 발생
-     * */
-    @Transactional(readOnly = true)
-    public User findUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(()->new IllegalArgumentException("해당 이메일로 가입된 ID가 없습니다."));
+     */
+    public Map<String, Object> findByEmail(String email) {
+        Map<String, Object> response = new HashMap<>();
+        Optional<User> findUser = userRepository.findByEmail(email);
+        if (findUser.isEmpty()) {
+            response.put("available", false);
+            response.put("message", "해당 이메일로 가입된 아이디가 없습니다.\n 다시 입력 해 주세요");
+        } else {
+            response.put("available", true);
+            response.put("loginId", findUser.get().getLoginId());
+        }
+        return response;
     }
+
+    //아이디, 이메일로 비밀번호 찾기
+    public Map<String, Object> findByPassword(String loginId, String email) {
+        Map<String, Object> response = new HashMap<>();
+        long count = userRepositoryDsl.countByLoginIdAndEmail(loginId, email);
+        System.out.println("count = " + count);
+        if (count == 0) {
+            response.put("available", false);
+            response.put("message", "아이디 혹은 이메일이 틀렸습니다.");
+        } else {
+            response.put("available", true);
+            response.put("message", "인증이 완료되었습니다. 새 비밀번호를 입력하세요.");
+        }
+        return response;
+    }
+
+    @Transactional
+    public Map<String, Object> updatePassword(String loginId, String email, String newPassword, String newPassword2) {
+        Map<String, Object> response = validatePassword(newPassword, newPassword2);
+        if((boolean) response.get("available")){
+            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+            String encodePassword = passwordEncoder.encode(newPassword);
+            long l = userRepositoryDsl.updatePassword(loginId, email, encodePassword);
+            if(l >0){
+                response.put("available", true);
+                response.put("message", "비밀번호가 변경되었습니다.");
+            }
+        } else {
+            String message = "";
+            if(response.get("message2")==null) {
+                message = response.get("message").toString()+ "\n"+"비밀번호를 똑같이 입력해 주세요.";
+            } else {
+                message = response.get("message").toString() + "\n" + response.get("message2").toString();
+            }
+            response.put("available", false);
+            response.put("message", message);
+        }
+        return response;
+    }
+
+
 
     public String getClientIp(HttpServletRequest request) {
         String ip = request.getHeader("X-Forwarded-For");

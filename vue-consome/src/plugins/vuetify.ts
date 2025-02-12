@@ -13,14 +13,16 @@ export default createVuetify({
       customTheme: {
         dark: false,
         colors: {
-          primary: colors.lightBlue.lighten3,
-          secondary: colors.lightBlue.darken1, // 어두운 회색
-          accent: colors.blue.accent1, // 하얀색
-          error: colors.red.accent3, // 빨간색 강조
-          success: colors.green.darken1, // 성공 버튼 색상
-          warning: colors.amber.darken2, // 경고 버튼 색상
+          primary: colors.shades.black,
+          secondary: colors.grey.lighten4,
+          accent: colors.blue.accent1,
+          error: colors.red.accent3,
+          success: colors.green.darken1,
+          warning: colors.amber.darken2,
           title: colors.shades.transparent,
-          transparent: colors.shades.transparent
+          transparent: colors.shades.transparent,
+          lightBlue: colors.lightBlue.lighten1,
+          darkGrey: colors.grey.darken4
         }
       }
     }
@@ -30,7 +32,7 @@ export default createVuetify({
       color: "primary",
       rounded: "md",
       style: "width: 80px",
-      variant: "elevated"
+      variant: "plain"
     }
   }
 });

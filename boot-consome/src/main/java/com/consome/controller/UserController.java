@@ -26,9 +26,9 @@ public class UserController {
     private final JwtUtil jwtUtil;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody User user, HttpServletRequest request) {
+    public ResponseEntity<?> signup(@RequestBody UserValidationRequest user, HttpServletRequest request) {
         try {
-            User userId = userService.register(user,request);
+            User userId = userService.register(user, request);
             return ResponseEntity.ok("회원가입이 완료되었습니다.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -76,7 +76,25 @@ public class UserController {
     // 비밀번호 입력 검증
     @PostMapping("/validPassword")
     public ResponseEntity<Map<String, Object>> validatePassword(@RequestBody UserValidationRequest request) {
-        return ResponseEntity.ok(userService.validatePassword(request.getPassword()));
+        return ResponseEntity.ok(userService.validatePassword(request.getPassword1(), request.getPassword2()));
+    }
+
+    //이메일로 아이디 찾기
+    @PostMapping("/findLoginId")
+    public ResponseEntity<Map<String, Object>> findLoginIdByEmail(@RequestBody UserValidationRequest request) {
+        return ResponseEntity.ok(userService.findByEmail(request.getEmail()));
+    }
+
+    //아이디, 이메일로 비밀번호
+    @PostMapping("/findPassword")
+    public ResponseEntity<Map<String, Object>> findPasswordByEmail(@RequestBody UserValidationRequest request) {
+        return ResponseEntity.ok(userService.findByPassword(request.getLoginId(), request.getEmail()));
+    }
+
+    //비밀번호 업데이트
+    @PostMapping("/updatePassword")
+    public ResponseEntity<Map<String, Object>> updatePassword(@RequestBody UserValidationRequest request) {
+        return ResponseEntity.ok(userService.updatePassword(request.getLoginId(), request.getEmail(), request.getPassword1(), request.getPassword2()));
     }
 
 }
