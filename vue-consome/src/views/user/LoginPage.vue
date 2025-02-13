@@ -50,7 +50,7 @@ const handleLogin = async () => {
   loading.value = true;
   errorMessage.value = "";
   try {
-    const response = await axios.post("/user/login", {
+    const response = await axios.post("/api/user/login", {
       loginId: loginId.value,
       password: password.value
     });

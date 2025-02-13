@@ -187,7 +187,7 @@ watch(
 const checkLoginId = async () => {
   if (!user.value.loginId) return;
   try {
-    const response = await axios.post("/user/validLoginId", { loginId: user.value.loginId });
+    const response = await axios.post("/api/user/validLoginId", { loginId: user.value.loginId });
     loginIdStatus.value = {
       available: response.data.available, // ✅ 서버 응답 값 저장
       icon: response.data.available ? "mdi-check-circle" : "mdi-close-circle",
@@ -203,7 +203,7 @@ const checkLoginId = async () => {
 const checkNickname = async () => {
   if (!user.value.nickname) return;
   try {
-    const response = await axios.post("/user/validNickname", { nickname: user.value.nickname });
+    const response = await axios.post("/api/user/validNickname", { nickname: user.value.nickname });
     nicknameStatus.value = {
       available: response.data.available, // ✅ 서버 응답 값 저장
       icon: response.data.available ? "mdi-check-circle" : "mdi-close-circle",
@@ -219,7 +219,7 @@ const checkNickname = async () => {
 const checkEmail = async () => {
   if (!user.value.email) return;
   try {
-    const response = await axios.post("/user/validEmail", { email: user.value.email });
+    const response = await axios.post("/api/user/validEmail", { email: user.value.email });
     emailStatus.value = {
       available: response.data.available, // ✅ 서버 응답 값 저장
       icon: response.data.available ? "mdi-check-circle" : "mdi-close-circle",
@@ -235,7 +235,7 @@ const checkEmail = async () => {
 const checkPassword = async () => {
   if (!user.value.password1) return;
   try {
-    const response = await axios.post("/user/validPassword", {
+    const response = await axios.post("/api/user/validPassword", {
       password1: user.value.password1,
       password2: user.value.password2
     });
@@ -269,7 +269,7 @@ const signup = async () => {
   loading.value = true;
   try {
     const requestData = { ...user.value };
-    const response = await axios.post("/user/signup", requestData);
+    const response = await axios.post("/api/user/signup", requestData);
 
     dialogMessage.value = response.data.message || "회원가입이 완료되었습니다.";
     dialogTitle.value = "회원가입 성공";

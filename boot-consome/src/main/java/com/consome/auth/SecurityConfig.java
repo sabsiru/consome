@@ -32,7 +32,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // ✅ CSRF 비활성화 (JWT 사용 시 필요)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // ✅ JWT 기반 인증을 위해 세션 사용 안 함
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/user/**", "/error","/").permitAll() // ✅ "/user/**" 및 "/error" 엔드포인트는 인증 없이 허용
+                        .requestMatchers("/api/user/**","/user/**", "/","/api").permitAll() // ✅ "/user/**" 및 "/error" 엔드포인트는 인증 없이 허용
                         .anyRequest().authenticated() // ✅ 그 외 모든 요청은 인증 필요
                 )
                 .formLogin(login -> login.disable()) // ✅ 폼 로그인 비활성화 (JWT 사용 시 필요)

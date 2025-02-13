@@ -97,7 +97,7 @@ const updateLoginId = (value: string) => {
 // 비밀번호 찾기 요청
 const findPassword = async () => {
   try {
-    const response = await axios.post("/user/findPassword", {
+    const response = await axios.post("/api/user/findPassword", {
       loginId: loginId.value,
       email: email.value
     });
@@ -123,7 +123,7 @@ const findPassword = async () => {
 // 비밀번호 변경 요청
 const updatePassword = async () => {
   try {
-    const response = await axios.post("/user/updatePassword", {
+    const response = await axios.post("/api/user/updatePassword", {
       loginId: loginId.value,
       email: email.value,
       password1: password1.value,

@@ -65,7 +65,7 @@ const findLoginId = async () => {
   errorMessage.value = "";
 
   try {
-    const response = await axios.post("/user/findLoginId", {
+    const response = await axios.post("/api/user/findLoginId", {
       email: email.value,
       nickname: nickname.value || null // 닉네임은 선택사항
     });
