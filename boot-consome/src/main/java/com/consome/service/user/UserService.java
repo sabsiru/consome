@@ -1,16 +1,16 @@
-package com.consome.service;
+package com.consome.service.user;
 
 import com.consome.auth.JwtUtil;
-import com.consome.domain.CurrentPoint;
-import com.consome.domain.PointHistory;
-import com.consome.domain.User;
-import com.consome.dto.request.LoginRequest;
-import com.consome.dto.request.UserValidationRequest;
-import com.consome.dto.response.UserResponse;
-import com.consome.repository.CurrentPointRepository;
-import com.consome.repository.PointHistoryRepository;
-import com.consome.repository.User.UserRepository;
-import com.consome.repository.User.dsl.UserRepositoryDsl;
+import com.consome.domain.user.CurrentPoint;
+import com.consome.domain.user.PointHistory;
+import com.consome.domain.user.User;
+import com.consome.dto.user.request.LoginRequest;
+import com.consome.dto.user.request.UserValidationRequest;
+import com.consome.dto.user.response.UserResponse;
+import com.consome.repository.user.CurrentPointRepository;
+import com.consome.repository.user.PointHistoryRepository;
+import com.consome.repository.user.UserRepository;
+import com.consome.repository.user.dsl.UserRepositoryDsl;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

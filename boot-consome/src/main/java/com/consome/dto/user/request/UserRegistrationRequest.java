@@ -1,4 +1,4 @@
-package com.consome.dto;
+package com.consome.dto.user.request;
 
 import lombok.Data;
 

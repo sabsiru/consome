@@ -1,4 +1,4 @@
-package com.consome.dto.request;
+package com.consome.dto.user.request;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

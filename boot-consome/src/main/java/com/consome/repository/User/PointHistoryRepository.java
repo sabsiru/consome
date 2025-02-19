@@ -1,7 +1,7 @@
-package com.consome.repository;
+package com.consome.repository.user;
 
-import com.consome.domain.PointHistory;
-import com.consome.domain.User;
+import com.consome.domain.user.PointHistory;
+import com.consome.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

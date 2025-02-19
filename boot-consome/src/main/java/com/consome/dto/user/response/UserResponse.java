@@ -1,8 +1,8 @@
-package com.consome.dto.response;
+package com.consome.dto.user.response;
 
-import com.consome.domain.BanType;
-import com.consome.domain.Role;
-import com.consome.domain.User;
+import com.consome.domain.user.BanType;
+import com.consome.domain.user.Role;
+import com.consome.domain.user.User;
 import lombok.Builder;
 import lombok.Getter;
 

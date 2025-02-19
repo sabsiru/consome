@@ -1,4 +1,4 @@
-package com.consome.domain;
+package com.consome.domain.user;
 
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,12 +1,12 @@
-package com.consome.service;
+package com.consome.service.user;
 
 
-import com.consome.domain.CurrentPoint;
-import com.consome.domain.PointHistory;
-import com.consome.domain.User;
-import com.consome.repository.CurrentPointRepository;
-import com.consome.repository.PointHistoryRepository;
-import com.consome.repository.User.UserRepository;
+import com.consome.domain.user.CurrentPoint;
+import com.consome.domain.user.PointHistory;
+import com.consome.domain.user.User;
+import com.consome.repository.user.CurrentPointRepository;
+import com.consome.repository.user.PointHistoryRepository;
+import com.consome.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,6 +1,4 @@
-package com.consome.domain;
-
-import lombok.Getter;
+package com.consome.domain.user;
 
 public enum BanType {
     NO(0),DAY(1),WEEK(7),MONTH(30),PERMANENT(36500);
