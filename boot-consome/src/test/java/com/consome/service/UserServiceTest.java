@@ -1,11 +1,12 @@
 package com.consome.service;
 
-import com.consome.domain.PointHistory;
-import com.consome.domain.User;
-import com.consome.dto.request.UserValidationRequest;
-import com.consome.repository.CurrentPointRepository;
-import com.consome.repository.PointHistoryRepository;
-import com.consome.repository.User.UserRepository;
+import com.consome.domain.user.PointHistory;
+import com.consome.domain.user.User;
+import com.consome.dto.user.request.UserValidationRequest;
+import com.consome.repository.user.CurrentPointRepository;
+import com.consome.repository.user.PointHistoryRepository;
+import com.consome.repository.user.UserRepository;
+import com.consome.service.user.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +24,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 class UserServiceTest {
 
-    @Autowired UserService userService;
+    @Autowired
+    UserService userService;
     @Autowired UserRepository userRepository;
     @Autowired PointHistoryRepository pointHistoryRepository;
     @Autowired CurrentPointRepository currentPointRepository;

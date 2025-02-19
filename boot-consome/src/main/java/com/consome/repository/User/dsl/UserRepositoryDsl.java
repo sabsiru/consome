@@ -1,7 +1,7 @@
-package com.consome.repository.User.dsl;
+package com.consome.repository.user.dsl;
 
-import com.consome.domain.QUser;
-import com.consome.domain.User;
+import com.consome.domain.user.QUser;
+import com.consome.domain.user.User;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

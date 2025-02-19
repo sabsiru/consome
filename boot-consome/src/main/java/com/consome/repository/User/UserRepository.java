@@ -1,9 +1,7 @@
-package com.consome.repository.User;
+package com.consome.repository.user;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.consome.domain.User;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
+import com.consome.domain.user.User;
 
 import java.util.Optional;
 

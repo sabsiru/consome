@@ -1,11 +1,11 @@
 package com.consome.controller;
 
 import com.consome.auth.JwtUtil;
-import com.consome.domain.User;
-import com.consome.dto.request.LoginRequest;
-import com.consome.dto.request.UserValidationRequest;
-import com.consome.dto.response.UserResponse;
-import com.consome.service.UserService;
+import com.consome.domain.user.User;
+import com.consome.dto.user.request.LoginRequest;
+import com.consome.dto.user.request.UserValidationRequest;
+import com.consome.dto.user.response.UserResponse;
+import com.consome.service.user.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
