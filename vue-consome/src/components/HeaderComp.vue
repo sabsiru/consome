@@ -15,6 +15,9 @@
             <span>{{ user?.nickname }}님 환영합니다. 포인트: {{ user?.point }}</span>
           </div>
           <v-btn text @click="logout" color="secondary" density="compact" variant="elevated" class="ml-2">로그아웃</v-btn>
+          <div v-if="user && user.role === 'ROLE_ADMIN'">
+            <v-btn text to="/admin" class="mr-1" density="compact" color="secondary" variant="elevated">관리자페이지 </v-btn>
+          </div>
         </div>
         <div v-else>
           <v-btn text to="/user/login" class="mr-1" density="compact" color="secondary" variant="elevated">로그인</v-btn>
