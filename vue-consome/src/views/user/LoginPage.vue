@@ -38,8 +38,8 @@
 import { ref } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import router from "@/router";
 
-const router = useRouter();
 const loginId = ref("");
 const password = ref("");
 const loading = ref(false);
@@ -56,10 +56,12 @@ const handleLogin = async () => {
     });
 
     if (response.data) {
-      localStorage.setItem("accessToken", response.data.token); // ✅ 토큰 저장
-      localStorage.setItem("refreshToken", response.data.token); // ✅ 토큰 저장
+      localStorage.setItem("accessToken", response.data.accessToken); // ✅ 토큰 저장
+      localStorage.setItem("refreshToken", response.data.refreshToken); // ✅ 토큰 저장
       localStorage.setItem("user", JSON.stringify(response.data)); // ✅ 유저 정보 저장
-      window.location.href = "/"; // ✅ 새로고침 후 메인으로 이동
+      router.push("/").then(() => {
+        window.location.reload();
+      });
     }
   } catch (error) {
     errorMessage.value = error.response.data;

@@ -130,9 +130,6 @@ const user = ref({
   password2: ""
 });
 
-const password1 = ref("");
-const password2 = ref("");
-
 // 검증 상태 (아이콘 및 색상)
 const loginIdStatus = ref({ available: false, icon: "mdi-help-circle", color: "gray", message: "", colorClass: "" });
 const nicknameStatus = ref({ available: false, icon: "mdi-help-circle", color: "gray", message: "", colorClass: "" });
@@ -152,19 +149,40 @@ const passwordStatus = ref({
 watch(
   () => user.value.loginId,
   (newValue) => {
-    if (!newValue) loginIdStatus.value = { available: false, icon: "mdi-help-circle", color: "gray", message: "", colorClass: "" };
+    if (!newValue)
+      loginIdStatus.value = {
+        available: false,
+        icon: "mdi-help-circle",
+        color: "gray",
+        message: "",
+        colorClass: ""
+      };
   }
 );
 watch(
   () => user.value.nickname,
   (newValue) => {
-    if (!newValue) nicknameStatus.value = { available: false, icon: "mdi-help-circle", color: "gray", message: "", colorClass: "" };
+    if (!newValue)
+      nicknameStatus.value = {
+        available: false,
+        icon: "mdi-help-circle",
+        color: "gray",
+        message: "",
+        colorClass: ""
+      };
   }
 );
 watch(
   () => user.value.email,
   (newValue) => {
-    if (!newValue) emailStatus.value = { available: false, icon: "mdi-help-circle", color: "gray", message: "", colorClass: "" };
+    if (!newValue)
+      emailStatus.value = {
+        available: false,
+        icon: "mdi-help-circle",
+        color: "gray",
+        message: "",
+        colorClass: ""
+      };
   }
 );
 watch(
